@@ -8,44 +8,28 @@ namespace BS
 {
     public class Game
     {
-        private Board _computer;
-        private Board _player;
+        private Player _computer;
 
+        public List<Player> Players { get; private set; }
         private Random _rand = new Random();
-        public void StartGame()
-        {
-            _computer = new Board();
-            _player = new Board();
 
-            GenerateShips(_computer);
+        public Game(){
+            Players = new List<Player>();
         }
 
-        private void GenerateShips(Board board)
+        public void StartMultiPlayerGame(string playerName, string player2Name)
         {
-            while (!AddShip(board, Ship.Battelship)) ;
-            while (!AddShip(board, Ship.Destroyer)) ;
-            while (!AddShip(board, Ship.Destroyer)) ;
+            Players.Add(new Player(playerName, false));
+            Players.Add(new Player(player2Name, false));
         }
 
-        private bool AddShip(Board board, Ship ship)
+        public Player StartSinglePlayerGame(string playerName)
         {
-            var loc = new Coordinates(_rand.Next(Board.MaxRow), _rand.Next(Board.MaxColumn));
-
-            return board.AddShip(loc, ship, (Direction)_rand.Next(1, 2));
-        }
-
-
-        public void AddPlayerShip(Coordinates loc, Ship ship, Direction direction)
-        {
-            var added = _player.AddShip(loc, ship, direction);
-            if (!added)
-            {
-                Console.Write($"Cannot add {ship} on your board at {loc} toward {direction}");
-            }
-            else
-            {
-                Console.Write($"Ship {ship} added on your board at {loc} toward {direction}");
-            }
+            var player = new Player(playerName, false); 
+            Players.Add(player);
+            _computer = new Player("Computer", true);
+            Players.Add(_computer);
+            return player;
         }
     }
 }

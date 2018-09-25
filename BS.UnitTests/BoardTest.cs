@@ -15,7 +15,7 @@ namespace BS.UnitTesting
         public void Add_Item()
         {
             var board = new Board();
-            var added = board.AddShip(new Coordinates(4, 3), Ship.Destroyer, Direction.Down);
+            var added = board.AddShip( Ship.Destroyer, new Coordinates(4, 3),Direction.Down);
             Assert.That(board, Is.Not.Null);
         }
 
@@ -23,7 +23,7 @@ namespace BS.UnitTesting
         public void Start()
         {
             var game = new Game();
-            game.StartGame();
+            game.StartSinglePlayerGame("Mohammad");
             Assert.That(game, Is.Not.Null);
         }
     }
