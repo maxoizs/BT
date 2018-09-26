@@ -16,18 +16,18 @@ namespace BS
             {"A",0},{"B",1},{"C",2},{"D",3},{"E",4},{"F",5},{"G",6},{"H",7},{"I",8}, {"J",9}};
 
         public List<Ship> Ships { get; private set; }
+        private Cell[,] Coordinates;
 
-        private Cell[,] _coorodinates;
         private int _hits = 0;
         private const int MaxHits = (int)Ship.Battelship + (int)Ship.Destroyer + (int)Ship.Destroyer;
         private int _misses = 0;
+        private Cell[,] _coordinates;
         private const int MaxMisses = 100 - MaxHits;
 
         public Board()
         {
             Ships = new List<Ship>();
-
-            _coorodinates = new Cell[MaxRow, MaxColumn];
+            Coordinates = new Cell[MaxRow, MaxColumn];
         }
 
         public void GenerateShips()
@@ -46,25 +46,26 @@ namespace BS
 
         public bool TakeHit(string loc)
         {
-            if( _hits == MaxHits || _misses > MaxMisses){
+            if (_hits == MaxHits || _misses > MaxMisses)
+            {
                 InvalidAction($"Hits:{_hits} and Misses:{_misses} you can't take No More ");
-                return false; 
+                return false;
             }
             var coords = GetCoordinations(loc);
-            if (_coorodinates[coords.X, coords.Y]==Cell.Shipe)
+            if (Coordinates[coords.X, coords.Y] == Cell.Shipe)
             {
-                _coorodinates[coords.X, coords.Y] = Cell.Hit;
+                Coordinates[coords.X, coords.Y] = Cell.Hit;
                 _hits++;
                 return true;
             }
-             _coorodinates[coords.X, coords.Y] = Cell.Miss;
+            Coordinates[coords.X, coords.Y] = Cell.Miss;
             _misses++;
             return false;
         }
 
         public bool IsLive()
         {
-            return _hits<MaxHits; 
+            return _hits < MaxHits;
         }
         public bool AddShip(Ship ship, Coordinates loc, Direction direction)
         {
@@ -73,6 +74,23 @@ namespace BS
                 return false;
             }
 
+            var targetLoc = CalculateCoords(ship, loc, direction);
+
+            var successful = UpdateCells(loc, targetLoc);
+            if (!successful)
+            {
+                Log.Output($"Cannot add {ship} on your board at {loc} toward {direction}");
+            }
+            else
+            {
+                Ships.Add(ship);
+                Log.Output($"Ship {ship} added on your board at {loc} toward {direction}");
+            }
+            return successful;
+        }
+
+        private Coordinates CalculateCoords(Ship ship, Coordinates loc, Direction direction)
+        {
             var shipSize = (int)ship;
 
             var x = 0;
@@ -88,17 +106,7 @@ namespace BS
                 x = loc.X + (int)ship; ;
                 y = loc.Y;
             }
-
-            var added = SetShip(loc, new Coordinates(x, y));
-            if (!added)
-            {
-                Log.Output($"Cannot add {ship} on your board at {loc} toward {direction}");
-            }
-            else
-            {
-                Log.Output($"Ship {ship} added on your board at {loc} toward {direction}");
-            }
-            return added;
+            return new Coordinates(x, y);
         }
 
         public bool AddShip(Ship ship, string loc, string direction)
@@ -182,7 +190,7 @@ namespace BS
             return false;
         }
 
-        private bool SetShip(Coordinates startLoc, Coordinates endLoc)
+        private bool UpdateCells(Coordinates startLoc, Coordinates endLoc)
         {
             if (!ValidCoordinates(startLoc) || !ValidCoordinates(endLoc))
             {
@@ -191,19 +199,19 @@ namespace BS
 
             for (int x = startLoc.X; x < endLoc.X; x++)
             {
-                if ((bool)_coorodinates.GetValue(x, startLoc.Y))
+                if (Coordinates[x, startLoc.Y] == Cell.Shipe)
                 {
                     return false;
                 }
-                _coorodinates.SetValue(true, x, startLoc.Y);
+                Coordinates.SetValue(Cell.Shipe, x, startLoc.Y);
             }
             for (int y = startLoc.Y; y < endLoc.Y; y++)
             {
-                if ((bool)_coorodinates.GetValue(startLoc.X, y))
+                if (Coordinates[startLoc.X, y] == Cell.Shipe)
                 {
                     return false;
                 }
-                _coorodinates.SetValue(true, startLoc.X, y);
+                Coordinates.SetValue(Cell.Shipe, startLoc.X, y);
             }
 
             return true;
