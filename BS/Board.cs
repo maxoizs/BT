@@ -7,31 +7,42 @@ namespace BS
     public class Board
     {
         private Random _rand = new Random();
-
         private const int ShipCapacity = 3;
         public const int MaxRow = 10;
         public const int MaxColumn = 10;
-
         private Dictionary<string, int> RowLabels = new Dictionary<string, int>{
             {"A",0},{"B",1},{"C",2},{"D",3},{"E",4},{"F",5},{"G",6},{"H",7},{"I",8}, {"J",9}};
 
         public List<Ship> Ships { get; private set; }
         private Cell[,] Coordinates;
-
-        private int _hits = 0;
-        private const int MaxHits = (int)Ship.Battelship + (int)Ship.Destroyer + (int)Ship.Destroyer;
-        private int _misses = 0;
+        public int Hits { get; private set; }
+        private const int MaxHits = (int)Ship.Battleship  + (int)Ship.Destroyer + (int)Ship.Destroyer;
+        public int Misses { get; private set; }
         private const int MaxMisses = 100 - MaxHits;
 
         public Board()
         {
+            Hits = 0;
+            Misses = 0;
             Ships = new List<Ship>();
-            Coordinates = new Cell[MaxRow, MaxColumn];
+            Coordinates = GenerateBoardCells();
+
+        }
+
+        private Cell[,] GenerateBoardCells()
+        {
+            var cells = new Cell[MaxRow, MaxColumn]; ;
+            for (var x = 0; x < MaxRow; x++)
+                for (var y = 0; y < MaxColumn; y++)
+                {
+                    cells.SetValue(Cell.Empty, x, y);
+                }
+            return cells;
         }
 
         public void GenerateShips()
         {
-            while (!AddShip(Ship.Battelship)) ;
+            while (!AddShip(Ship.Battleship )) ;
             while (!AddShip(Ship.Destroyer)) ;
             while (!AddShip(Ship.Destroyer)) ;
         }
@@ -45,26 +56,26 @@ namespace BS
 
         public bool TakeHit(string loc)
         {
-            if (_hits == MaxHits || _misses > MaxMisses)
+            if (Hits == MaxHits || Misses > MaxMisses)
             {
-                InvalidAction($"Hits:{_hits} and Misses:{_misses} you can't take No More ");
+                InvalidAction($"Hits:{Hits} and Misses:{Misses} you can't take No More ");
                 return false;
             }
             var coords = GetCoordinations(loc);
-            if (Coordinates[coords.X, coords.Y] == Cell.Shipe)
+            if (Coordinates[coords.X, coords.Y] == Cell.Destroyer || Coordinates[coords.X, coords.Y] == Cell.Battleship)
             {
                 Coordinates[coords.X, coords.Y] = Cell.Hit;
-                _hits++;
+                Hits++;
                 return true;
             }
             Coordinates[coords.X, coords.Y] = Cell.Miss;
-            _misses++;
+            Misses++;
             return false;
         }
 
         public bool IsLive()
         {
-            return _hits < MaxHits;
+            return Hits < MaxHits;
         }
         public bool AddShip(Ship ship, Coordinates loc, Direction direction)
         {
@@ -75,7 +86,7 @@ namespace BS
 
             var targetLoc = CalculateCoords(ship, loc, direction);
 
-            var successful = UpdateCells(loc, targetLoc);
+            var successful = UpdateCells(ship, loc, targetLoc);
             if (!successful)
             {
                 Log.Output($"Cannot add {ship} on your board at {loc} toward {direction}");
@@ -172,9 +183,9 @@ namespace BS
                 return true;
             }
 
-            if (ship == Ship.Battelship)
+            if (ship == Ship.Battleship )
             {
-                if (Ships.Count(s => s == Ship.Battelship) == 1)
+                if (Ships.Count(s => s == Ship.Battleship ) == 1)
                 {
                     return true;
                 }
@@ -189,7 +200,7 @@ namespace BS
             return false;
         }
 
-        private bool UpdateCells(Coordinates startLoc, Coordinates endLoc)
+        private bool UpdateCells(Ship ship, Coordinates startLoc, Coordinates endLoc)
         {
             if (!ValidCoordinates(startLoc) || !ValidCoordinates(endLoc))
             {
@@ -198,19 +209,19 @@ namespace BS
 
             for (int x = startLoc.X; x < endLoc.X; x++)
             {
-                if (Coordinates[x, startLoc.Y] == Cell.Shipe)
+                if (Coordinates[x, startLoc.Y] > Cell.Miss)
                 {
                     return false;
                 }
-                Coordinates.SetValue(Cell.Shipe, x, startLoc.Y);
+                Coordinates.SetValue(ship.ToCell(), x, startLoc.Y);
             }
             for (int y = startLoc.Y; y < endLoc.Y; y++)
             {
-                if (Coordinates[startLoc.X, y] == Cell.Shipe)
+                if (Coordinates[startLoc.X, y] > Cell.Miss)
                 {
                     return false;
                 }
-                Coordinates.SetValue(Cell.Shipe, startLoc.X, y);
+                Coordinates.SetValue(ship.ToCell(), startLoc.X, y);
             }
 
             return true;

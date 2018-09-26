@@ -8,8 +8,6 @@ namespace BS
 {
     public class Game
     {
-        private Player _computer;
-
         public List<Player> Players { get; private set; }
         private Random _rand = new Random();
 
@@ -23,13 +21,23 @@ namespace BS
             Players.Add(new Player(player2Name, false));
         }
 
-        public Player StartSinglePlayerGame(string playerName)
+        public void StartSinglePlayerGame(string playerName)
         {
             var player = new Player(playerName, false); 
             Players.Add(player);
-            _computer = new Player("Computer", true);
-            Players.Add(_computer);
-            return player;
+            var computer = new Player("Computer", true);
+            Players.Add(computer);
+
+            StartSinglePlay(computer, player);
         }
+
+        private void StartSinglePlay(Player computer, Player player)
+        { 
+            var finish = false; 
+          
+            
+        }
+
+
     }
 }

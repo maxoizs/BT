@@ -17,7 +17,7 @@ namespace Tests
 
             board.GenerateShips();
 
-            var expected = new List<Ship> { Ship.Battelship, Ship.Destroyer, Ship.Destroyer };
+            var expected = new List<Ship> { Ship.Battleship , Ship.Destroyer, Ship.Destroyer };
             CollectionAssert.AreEquivalent(expected, board.Ships);
         }
 

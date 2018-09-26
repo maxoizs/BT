@@ -4,6 +4,9 @@ using System.Text.RegularExpressions;
 
 namespace BS
 {
+    /// <summary>
+    /// <see cref="Cell"/> Location 
+    /// </summary>
     public class Coordinates
     {
         public int X { get;private set; }
