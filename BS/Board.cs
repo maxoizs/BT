@@ -21,7 +21,6 @@ namespace BS
         private int _hits = 0;
         private const int MaxHits = (int)Ship.Battelship + (int)Ship.Destroyer + (int)Ship.Destroyer;
         private int _misses = 0;
-        private Cell[,] _coordinates;
         private const int MaxMisses = 100 - MaxHits;
 
         public Board()

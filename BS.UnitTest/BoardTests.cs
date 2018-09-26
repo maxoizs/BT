@@ -2,24 +2,13 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using BS;
 
-namespace BS.UnitTesting
+namespace Tests
 {
     [TestFixture]
     public class BoardTest
     {
-
-        [Test]
-        public void When_CreateBoard_ShouldSetCoordinates_ToAvailableMax()
-        {
-            var board = new Board();
-
-            Assert.That(board.Coordinates.GetLength(0), Is.EqualTo(Board.MaxRow));
-            Assert.That(board.Coordinates.GetLength(1), Is.EqualTo(Board.MaxColumn));
-        }
 
         [Test]
         public void When_GenerateShips_ShouldCreateThreeShips()
@@ -70,7 +59,7 @@ namespace BS.UnitTesting
         public void GiveInvalidCoordinatesAndShip_BoardShouldNotAddShip()
         {
             var board = new Board();
-            
+
             var added = board.AddShip(Ship.Destroyer, new Coordinates(14, 13), Direction.Down);
 
             Assert.False(added);
@@ -81,9 +70,9 @@ namespace BS.UnitTesting
         {
             var board = new Board();
 
-            var added = board.AddShip(Ship.Destroyer,"A5", "D");           
+            var added = board.AddShip(Ship.Destroyer, "A5", "D");
             Assert.True(added);
-            Assert.That(board.Coordinates[0, 5], Is.EqualTo(Cell.Shipe));
+            Assert.That(board.Ships, Has.Count.EqualTo(1));
         }
     }
 }
