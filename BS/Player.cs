@@ -36,7 +36,7 @@ namespace BS
 
         internal bool Lost()
         {
-            throw new NotImplementedException();
+            return !_board.IsLive();
         }
 
         internal void TakeHit(Coordinates loc)
@@ -56,7 +56,7 @@ namespace BS
         private Coordinates GetHitLocation()
         {
             Coordinates coords = null;
-            while (coords != null)
+            while (coords == null)
             {
                 Log.Output($"Where you would like to hit, ex: A5 (A for row and 5 for column)");
                 var loc = Console.ReadLine();
@@ -68,7 +68,7 @@ namespace BS
         public void PrintStatus()
         {
             Log.Output(Name);
-            _board.PrintStatus();
+            Log.Output(_board.PrintStatus());
         }
 
         private Coordinates RandomHit()

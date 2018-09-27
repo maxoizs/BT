@@ -74,14 +74,9 @@ namespace BS
             return false;
         }
 
-        internal void PrintStatus()
-        {
-            throw new NotImplementedException();
-        }
-
         public bool IsLive()
         {
-            return Ships.Any(s => s.Alive);
+            return _hits >= (int)ShipType.Destroyer + (int)ShipType.Destroyer + (int)ShipType.Destroyer;
         }
         public bool AddShip(Ship ship, Coordinates loc, Direction direction)
         {
@@ -255,7 +250,7 @@ namespace BS
             return true;
         }
 
-        public string PrintStats()
+        public string PrintStatus()
         {
             var output = new StringBuilder();
             output.AppendLine("  " + string.Join(' ', RowLabels.Keys));

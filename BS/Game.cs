@@ -29,6 +29,8 @@ namespace BS
         {
             while (true)
             {
+                Computer.PrintStatus();
+                Player.PrintStatus();
                 var playerHit= Player.Hit();
                 Computer.TakeHit(playerHit);
 
