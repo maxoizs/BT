@@ -24,7 +24,8 @@ namespace BS
             var game = new Game();
 
             game.Start(playerName);
-            game.Players[0].PrintStats();
+            game.PrintStats();
+
         }
     }
 }

@@ -12,7 +12,8 @@ namespace BS
     public class Player
     {
         public string Name { get; private set; }
-        private Board _board;
+        private Random _rand = new Random();
+        private Board _board = new Board();
 
         /// <summary>
         /// Identify if it's a normal player or computer one.
@@ -23,7 +24,6 @@ namespace BS
         {
             Name = name;
             IsComputer = isComputer;
-            _board = new Board();
             if (IsComputer)
             {
                 _board.GenerateShips();
@@ -34,46 +34,58 @@ namespace BS
             }
         }
 
-        public void PrintStats()
+        internal bool Lost()
         {
-            Log.Output(_board.GetStats());
+            throw new NotImplementedException();
         }
 
-        public List<Ship> Ships()
+        internal void TakeHit(Coordinates loc)
         {
-            return _board.Ships.ToList();
+            _board.TakeHit(loc);
         }
 
-        public int Hits()
+        public Coordinates Hit()
         {
-            return 0;
-        }
-        public int Misses()
-        {
-            return 0;
-        }
-        public bool AddShip(Ship ship, Coordinates loc, Direction direction)
-        {
-            return _board.AddShip(ship, loc, direction);
+            if (IsComputer)
+            {
+                return RandomHit();
+            }
+            return GetHitLocation();
         }
 
-        public bool AddShip(Ship ship, string loc, string direction)
+        private Coordinates GetHitLocation()
         {
-            return _board.AddShip(ship, loc, direction);
+            Coordinates coords = null;
+            while (coords != null)
+            {
+                Log.Output($"Where you would like to hit, ex: A5 (A for row and 5 for column)");
+                var loc = Console.ReadLine();
+                coords = Board.GetCoordinations(loc);
+            }
+            return coords; 
         }
 
-        public bool TakeHit(string loc)
+        public void PrintStatus()
         {
-            return _board.TakeHit(loc);
+            Log.Output(Name);
+            _board.PrintStatus();
         }
+
+        private Coordinates RandomHit()
+        {
+            var row = _rand.Next(1, Board.MaxRow);
+            var colum = _rand.Next(1, Board.MaxColumn);
+            return new Coordinates(row, colum);
+        }
+
         private void AddShips()
         {
-            AddShip(new Destroyer());
-            AddShip(new Destroyer());
-            AddShip(new Battleship());
+            AddShip( new Destroyer());
+            AddShip( new Destroyer());
+            AddShip( new Battleship());
         }
 
-        public void AddShip(Ship ship)
+        private void AddShip(Ship ship)
         {
             var added = false;
             while (!added)

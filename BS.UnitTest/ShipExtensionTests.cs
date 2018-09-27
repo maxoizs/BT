@@ -13,12 +13,12 @@ namespace Tests
         [Test]
         public void GivenBattelship_ShouldGetBattelshipCell()
         {
-            Assert.That(Ship.Battleship .ToCell(), Is.EqualTo(Cell.Battleship ));
+            Assert.That(new Battleship().ToCell(), Is.EqualTo(Cell.Battleship ));
         }
 
         public void GivenDestroyer_ShouldGetDestroyerCell()
         {
-            Assert.That(Ship.Destroyer.ToCell(), Is.EqualTo(Cell.Destroyer));
+            Assert.That(new Destroyer().ToCell(), Is.EqualTo(Cell.Destroyer));
         }
     }
 }

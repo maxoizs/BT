@@ -1,8 +1,7 @@
+using BS;
 using NUnit.Framework;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using BS;
 
 namespace Tests
 {
@@ -18,7 +17,7 @@ namespace Tests
             board.GenerateShips();
 
             var expected = new List<Ship> { new Battleship(), new Destroyer(), new Destroyer() };
-            CollectionAssert.AreEquivalent(expected, board.Ships);
+            CollectionAssert.AreEquivalent(expected.Select(s => s.Name), board.Ships.Select(s => s.Name));
         }
 
         [Test]
@@ -30,7 +29,7 @@ namespace Tests
 
             Assert.True(added);
             Assert.That(board.Ships, Has.Count.EqualTo(1));
-            Assert.That(board.Ships.First(), Is.EqualTo(new Destroyer()));
+            Assert.That(board.Ships.First().Name, Is.EqualTo(new Destroyer().Name));
         }
 
         [Test]
@@ -38,8 +37,8 @@ namespace Tests
         {
             var board = new Board();
 
-            board.AddShip(Ship.Destroyer, new Coordinates(4, 3), Direction.Down);
-            var added = board.AddShip(Ship.Destroyer, new Coordinates(4, 3), Direction.Down);
+            board.AddShip(new Destroyer(), new Coordinates(4, 3), Direction.Down);
+            var added = board.AddShip(new Destroyer(), new Coordinates(4, 3), Direction.Down);
 
             Assert.False(added);
         }
@@ -49,8 +48,8 @@ namespace Tests
         {
             var board = new Board();
 
-            board.AddShip(Ship.Destroyer, new Coordinates(4, 3), Direction.Down);
-            var added = board.AddShip(Ship.Destroyer, new Coordinates(4, 4), Direction.Down);
+            board.AddShip(new Destroyer(), new Coordinates(4, 3), Direction.Down);
+            var added = board.AddShip(new Destroyer(), new Coordinates(4, 4), Direction.Down);
 
             Assert.False(added);
         }
@@ -60,7 +59,7 @@ namespace Tests
         {
             var board = new Board();
 
-            var added = board.AddShip(Ship.Destroyer, new Coordinates(14, 13), Direction.Down);
+            var added = board.AddShip(new Destroyer(), new Coordinates(14, 13), Direction.Down);
 
             Assert.False(added);
         }
@@ -70,7 +69,7 @@ namespace Tests
         {
             var board = new Board();
 
-            var added = board.AddShip(Ship.Destroyer, "A5", "D");
+            var added = board.AddShip(new Destroyer(), "A5", "D");
             Assert.True(added);
             Assert.That(board.Ships, Has.Count.EqualTo(1));
         }

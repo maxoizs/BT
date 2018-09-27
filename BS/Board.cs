@@ -11,7 +11,7 @@ namespace BS
         private const int ShipCapacity = 3;
         public const int MaxRow = 10;
         public const int MaxColumn = 10;
-        private Dictionary<string, int> RowLabels = new Dictionary<string, int>{
+        public static readonly Dictionary<string, int> RowLabels = new Dictionary<string, int>{
             {"A",0},{"B",1},{"C",2},{"D",3},{"E",4},{"F",5},{"G",6},{"H",7},{"I",8}, {"J",9}};
 
         public List<Ship> Ships { get; private set; }
@@ -54,24 +54,29 @@ namespace BS
             return AddShip(ship, loc, (Direction)_rand.Next(1, 2));
         }
 
-        public bool TakeHit(string loc)
+        public bool? TakeHit(Coordinates loc)
         {
             if (!IsLive())
             {
                 InvalidAction($"All ships have been sunk, and player lost already!");
                 return false;
-            }
-            var coords = GetCoordinations(loc);
-            if (Coordinates[coords.X, coords.Y] == Cell.Destroyer || Coordinates[coords.X, coords.Y] == Cell.Battleship)
+            }            
+
+            if (Coordinates[loc.X, loc.Y] == Cell.Destroyer || Coordinates[loc.X, loc.Y] == Cell.Battleship)
             {
-                Coordinates[coords.X, coords.Y] = Cell.Hit;
+                Coordinates[loc.X, loc.Y] = Cell.Hit;
                 _hits++;
                 return true;
             }
 
-            Coordinates[coords.X, coords.Y] = Cell.Miss;
+            Coordinates[loc.X, loc.Y] = Cell.Miss;
             _misses++;
             return false;
+        }
+
+        internal void PrintStatus()
+        {
+            throw new NotImplementedException();
         }
 
         public bool IsLive()
@@ -92,6 +97,7 @@ namespace BS
             if (cells == null)
             {
                 Log.Output($"Cannot add {ship.Name} on your board at {loc} toward {direction}");
+                return false;
             }
 
             UpdateCells(cells, ship);
@@ -152,10 +158,10 @@ namespace BS
             return AddShip(ship, coords, dir);
         }
 
-        private Coordinates GetCoordinations(string loc)
+        public static Coordinates GetCoordinations(string loc)
         {
-            var x = 0;
-            var y = 0;
+            var x = -1;
+            var y = -1;
 
             if (RowLabels.Keys.Contains(loc[0].ToString().ToUpper()))
             {
@@ -163,21 +169,26 @@ namespace BS
             }
             else
             {
-                InvalidAction("Row doesn't exists");
                 return null;
             }
-
 
             if (!int.TryParse(loc[1].ToString(), out y))
             {
-                InvalidAction("Column is not digit");
                 return null;
             }
 
-            return new Coordinates(x, y);
+            var coords = new Coordinates(x, y);
+            if (ValidCoordinates(coords))
+            {
+                return coords;
+            }
+            else
+            {
+                return null;
+            }
         }
 
-        private void InvalidAction(string error)
+        private static void InvalidAction(string error)
         {
             Log.Output($"{error}, please check the correct value");
         }
@@ -235,7 +246,7 @@ namespace BS
             return validLocs;
         }
 
-        private bool ValidCoordinates(Coordinates loc)
+        private static bool ValidCoordinates(Coordinates loc)
         {
             if (loc.Y < 0 || loc.Y >= MaxColumn || loc.X < 0 || loc.X >= MaxRow)
             {
@@ -244,7 +255,7 @@ namespace BS
             return true;
         }
 
-        public string GetStats()
+        public string PrintStats()
         {
             var output = new StringBuilder();
             output.AppendLine("  " + string.Join(' ', RowLabels.Keys));

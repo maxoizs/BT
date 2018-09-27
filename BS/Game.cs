@@ -8,29 +8,52 @@ namespace BS
 {
     public class Game
     {
-        public List<Player> Players { get; private set; }
+        public Player Player { get; private set; }
+        public Player Computer { get; private set; }
+
+        public Player Winner { get; private set; }
         private Random _rand = new Random();
 
         public Game()
         {
-            Players = new List<Player>();
         }
 
         public void Start(string playerName)
         {
-            var player = new Player(playerName, false);
-            Players.Add(player);
-            var computer = new Player("Computer", true);
-            Players.Add(computer);
-
-            StartPlay(computer, player);
+            Player = new Player(playerName, false);
+            Computer = new Player("Computer", true);
+            StartPlay();
         }
 
-        private void StartPlay(Player computer, Player player)
+        private void StartPlay()
         {
+            while (true)
+            {
+                var playerHit= Player.Hit();
+                Computer.TakeHit(playerHit);
 
+                if (Computer.Lost())
+                {
+                    // Finish the game
+                    Winner = Player;
+                    return;
+                }
+
+                var computerHit = Computer.Hit();
+                Player.TakeHit(computerHit);
+                if (Player.Lost())
+                {
+                    // Finish the game
+                    Winner = Computer;
+                    return;
+                }
+            }
         }
 
-
+        public void PrintStats()
+        {
+            Player.PrintStatus();
+            Computer.PrintStatus();
+        }
     }
 }
