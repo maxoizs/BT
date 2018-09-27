@@ -16,10 +16,10 @@ namespace BS
 
         public List<Ship> Ships { get; private set; }
         private Cell[,] Coordinates;
-        public int Hits { get; private set; }
-        private const int MaxHits = (int)Ship.Battleship + (int)Ship.Destroyer + (int)Ship.Destroyer;
-        public int Misses { get; private set; }
-        private const int MaxMisses = 100 - MaxHits;
+
+        private int _hits = 0;
+        private int _misses = 0;
+        private Cell[,] _coordinates;
 
         public Board()
         {
@@ -43,9 +43,9 @@ namespace BS
 
         public void GenerateShips()
         {
-            while (!AddShip(Ship.Battleship)) ;
-            while (!AddShip(Ship.Destroyer)) ;
-            while (!AddShip(Ship.Destroyer)) ;
+            while (!AddShip(new Battleship())) ;
+            while (!AddShip(new Destroyer())) ;
+            while (!AddShip(new Destroyer())) ;
         }
 
         private bool AddShip(Ship ship)
@@ -57,9 +57,9 @@ namespace BS
 
         public bool TakeHit(string loc)
         {
-            if (Hits == MaxHits || Misses > MaxMisses)
+            if (!IsLive())
             {
-                InvalidAction($"Hits:{Hits} and Misses:{Misses} you can't take No More ");
+                InvalidAction($"All ships have been sunk, and player lost already!");
                 return false;
             }
             var coords = GetCoordinations(loc);
@@ -76,7 +76,7 @@ namespace BS
 
         public bool IsLive()
         {
-            return Hits < MaxHits;
+            return Ships.Any(s=> s.Alive);
         }
         public bool AddShip(Ship ship, Coordinates loc, Direction direction)
         {
@@ -85,14 +85,13 @@ namespace BS
                 return false;
             }
 
-            var targetLoc = CalculateCoords(ship, loc, direction);
+            var targetLoc = CalculateCoords(ship.Size, loc, direction);
 
             var cells = GetEmptyCells(loc, targetLoc);
 
             if (cells == null)
             {
-                Log.Output($"Cannot add {ship} on your board at {loc} toward {direction}");
-                return false;
+                Log.Output($"Cannot add {ship.Name} on your board at {loc} toward {direction}");
             }
 
             UpdateCells(cells, ship);
@@ -105,25 +104,24 @@ namespace BS
         {
             foreach (var coordinate in coordinates)
             {
-                Coordinates.SetValue((int)ship, coordinate.X, coordinate.Y);
+                Ships.Add(ship);
+                Log.Output($"Ship {ship.Name} added on your board at {loc} toward {direction}");
             }
         }
 
-        private Coordinates CalculateCoords(Ship ship, Coordinates loc, Direction direction)
+        private Coordinates CalculateCoords(int shipSize, Coordinates loc, Direction direction)
         {
-            var shipSize = (int)ship;
-
             var x = 0;
             var y = 0;
 
             if (direction == Direction.Down)
             {
                 x = loc.X;
-                y = loc.Y + (int)ship;
+                y = loc.Y + shipSize;
             }
             else
             {
-                x = loc.X + (int)ship; ;
+                x = loc.X + shipSize;
                 y = loc.Y;
             }
             return new Coordinates(x, y);
@@ -193,16 +191,16 @@ namespace BS
                 return true;
             }
 
-            if (ship == Ship.Battleship)
+            if (ship.Type == ShipType.Battleship)
             {
-                if (Ships.Count(s => s == Ship.Battleship) == 1)
+                if (Ships.Count(s => s.Type == ShipType.Battleship) == 1)
                 {
                     return true;
                 }
             }
             else
             {
-                if (Ships.Count(s => s == Ship.Destroyer) == 2)
+                if (Ships.Count(s => s.Type == ShipType.Destroyer) == 2)
                 {
                     return false;
                 }

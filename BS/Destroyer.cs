@@ -6,5 +6,6 @@ namespace BS
     {
         public override string Name => "Destroyer";
         public override int Size => 2;
+        public override ShipType Type => ShipType.Destroyer;
     }
 }

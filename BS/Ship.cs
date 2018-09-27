@@ -2,17 +2,16 @@ using System.Collections.Generic;
 
 namespace BS
 {
-
-
     /// <summary>
     /// Ship names with it's size
     /// </summary>
-    public class Ship
+    public abstract class Ship
     {
         public Ship()
         {
             Alive = true;
         }
+        public abstract ShipType Type { get; }
         public abstract string Name { get; }
         public string Flag
         {

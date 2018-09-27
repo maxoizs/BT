@@ -22,6 +22,9 @@ namespace BS
             Log.Output("Please enter your name");
             var playerName = Console.ReadLine();
             var game = new Game();
+player.AddShip(new Destroyer());
+            player.AddShip(new Destroyer());
+            player.AddShip(new Battleship());
             game.StartSinglePlayerGame(playerName);    
             game.Players[0].PrintStats();       
         }        
