@@ -8,8 +8,8 @@ namespace BS
         {
             Log.Output("Welcom to Battel Ship game!");
             Log.Output("Would you like to start a game ? [Yy] for yes, anykey for no");
-            var newGame = Console.ReadKey().KeyChar;
-            if (newGame.ToString().ToLower() == "y")
+            var newGame = Console.ReadLine();
+            if (newGame.ToLower() == "y")
             {
                 StartNewGame();
             }
@@ -22,7 +22,8 @@ namespace BS
             Log.Output("Please enter your name");
             var playerName = Console.ReadLine();
             var game = new Game();
-            game.StartSinglePlayerGame(playerName);           
+            game.StartSinglePlayerGame(playerName);    
+            game.Players[0].PrintStats();       
         }        
     }
 }

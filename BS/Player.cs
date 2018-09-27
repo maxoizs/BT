@@ -34,15 +34,23 @@ namespace BS
             }
         }
 
-        public List<Ship> Ships(){
+        public void PrintStats()
+        {
+            Log.Output(_board.GetStats());
+        }
+
+        public List<Ship> Ships()
+        {
             return _board.Ships.ToList();
         }
 
-        public int Hits(){
-          return  _board.Hits;
+        public int Hits()
+        {
+            return _board.Hits;
         }
-        public int Misses(){
-          return  _board.Misses;
+        public int Misses()
+        {
+            return _board.Misses;
         }
         public bool AddShip(Ship ship, Coordinates loc, Direction direction)
         {
@@ -62,7 +70,7 @@ namespace BS
         {
             AddShip(Ship.Destroyer);
             AddShip(Ship.Destroyer);
-            AddShip(Ship.Battleship );
+            AddShip(Ship.Battleship);
         }
 
         public void AddShip(Ship ship)

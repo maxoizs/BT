@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace BS
 {
@@ -16,7 +17,7 @@ namespace BS
         public List<Ship> Ships { get; private set; }
         private Cell[,] Coordinates;
         public int Hits { get; private set; }
-        private const int MaxHits = (int)Ship.Battleship  + (int)Ship.Destroyer + (int)Ship.Destroyer;
+        private const int MaxHits = (int)Ship.Battleship + (int)Ship.Destroyer + (int)Ship.Destroyer;
         public int Misses { get; private set; }
         private const int MaxMisses = 100 - MaxHits;
 
@@ -42,7 +43,7 @@ namespace BS
 
         public void GenerateShips()
         {
-            while (!AddShip(Ship.Battleship )) ;
+            while (!AddShip(Ship.Battleship)) ;
             while (!AddShip(Ship.Destroyer)) ;
             while (!AddShip(Ship.Destroyer)) ;
         }
@@ -86,17 +87,26 @@ namespace BS
 
             var targetLoc = CalculateCoords(ship, loc, direction);
 
-            var successful = UpdateCells(ship, loc, targetLoc);
-            if (!successful)
+            var cells = GetEmptyCells(loc, targetLoc);
+
+            if (cells == null)
             {
                 Log.Output($"Cannot add {ship} on your board at {loc} toward {direction}");
+                return false;
             }
-            else
+
+            UpdateCells(cells, ship);
+            Ships.Add(ship);
+            Log.Output($"Ship {ship} added on your board at {loc} toward {direction}");
+            return true;
+        }
+
+        private void UpdateCells(List<Coordinates> coordinates, Ship ship)
+        {
+            foreach (var coordinate in coordinates)
             {
-                Ships.Add(ship);
-                Log.Output($"Ship {ship} added on your board at {loc} toward {direction}");
+                Coordinates.SetValue((int)ship, coordinate.X, coordinate.Y);
             }
-            return successful;
         }
 
         private Coordinates CalculateCoords(Ship ship, Coordinates loc, Direction direction)
@@ -150,7 +160,7 @@ namespace BS
             var x = 0;
             var y = 0;
 
-            if (RowLabels.ContainsKey(loc[0].ToString().ToUpper()))
+            if (RowLabels.Keys.Contains(loc[0].ToString().ToUpper()))
             {
                 x = RowLabels[loc[0].ToString().ToUpper()];
             }
@@ -183,9 +193,9 @@ namespace BS
                 return true;
             }
 
-            if (ship == Ship.Battleship )
+            if (ship == Ship.Battleship)
             {
-                if (Ships.Count(s => s == Ship.Battleship ) == 1)
+                if (Ships.Count(s => s == Ship.Battleship) == 1)
                 {
                     return true;
                 }
@@ -200,31 +210,32 @@ namespace BS
             return false;
         }
 
-        private bool UpdateCells(Ship ship, Coordinates startLoc, Coordinates endLoc)
+        private List<Coordinates> GetEmptyCells(Coordinates startLoc, Coordinates endLoc)
         {
+            var validLocs = new List<Coordinates>();
             if (!ValidCoordinates(startLoc) || !ValidCoordinates(endLoc))
             {
-                return false;
+                return null;
             }
 
             for (int x = startLoc.X; x < endLoc.X; x++)
             {
                 if (Coordinates[x, startLoc.Y] > Cell.Miss)
                 {
-                    return false;
+                    return null;
                 }
-                Coordinates.SetValue(ship.ToCell(), x, startLoc.Y);
+                validLocs.Add(new Coordinates(x, startLoc.Y));
             }
             for (int y = startLoc.Y; y < endLoc.Y; y++)
             {
                 if (Coordinates[startLoc.X, y] > Cell.Miss)
                 {
-                    return false;
+                    return null;
                 }
-                Coordinates.SetValue(ship.ToCell(), startLoc.X, y);
+                validLocs.Add(new Coordinates(startLoc.X, y));
             }
 
-            return true;
+            return validLocs;
         }
 
         private bool ValidCoordinates(Coordinates loc)
@@ -234,6 +245,23 @@ namespace BS
                 return false;
             }
             return true;
+        }
+
+        public string GetStats()
+        {
+            var output = new StringBuilder();
+            output.AppendLine("  " + string.Join(' ', RowLabels.Keys));
+            for (var y = 0; y < Coordinates.GetLength(1); y++)
+            {
+                output.AppendLine();
+                output.Append(y.ToString() + " ");
+                for (var x = 0; x < Coordinates.GetLength(0); x++)
+                {
+                    output.Append((int)Coordinates.GetValue(x, y));
+                    output.Append(" ");
+                }
+            }
+            return output.ToString();
         }
     }
 }
