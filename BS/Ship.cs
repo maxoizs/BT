@@ -1,11 +1,59 @@
+using System.Collections.Generic;
+
 namespace BS
 {
+
+
     /// <summary>
     /// Ship names with it's size
     /// </summary>
-    public enum Ship
+    public class Ship
     {
-        Destroyer = 2, 
-        Battleship  = 5
+        public Ship()
+        {
+            Alive = true;
+        }
+        public abstract string Name { get; }
+        public string Flag
+        {
+            get
+            {
+                return Name[0].ToString();
+            }
+        }
+        public abstract int Size { get; }
+        public bool Alive { get; private set; }
+
+        /// <summary>
+        /// Ship <see cref="Coordinates"/>
+        /// </summary>
+        public List<Coordinates> Positions { get; private set; }
+
+        /// <summary>
+        /// index of hits within it's <see cref="Positions"/>
+        /// </summary>
+        /// <value></value>
+        public List<int> Hits { get; private set; }
+
+        public bool TakeHit(Coordinates loc)
+        {
+            if (!Alive)
+            {
+                return false;
+            }
+
+            if (!Positions.Contains(loc))
+            {
+                return false;
+            }
+
+            Hits.Add(Positions.IndexOf(loc));
+
+            if (Hits.Count == Size)
+            {
+                Alive = false;
+            }
+            return true;
+        }
     }
 }
