@@ -15,16 +15,15 @@ namespace BS
             {"A",0},{"B",1},{"C",2},{"D",3},{"E",4},{"F",5},{"G",6},{"H",7},{"I",8}, {"J",9}};
 
         public List<Ship> Ships { get; private set; }
-        private Cell[,] Coordinates;
+        public Cell[,] Coordinates { get; private set; }
 
         private int _hits = 0;
         private int _misses = 0;
-        private Cell[,] _coordinates;
 
         public Board()
         {
-            Hits = 0;
-            Misses = 0;
+            _hits = 0;
+            _misses = 0;
             Ships = new List<Ship>();
             Coordinates = GenerateBoardCells();
 
@@ -66,17 +65,18 @@ namespace BS
             if (Coordinates[coords.X, coords.Y] == Cell.Destroyer || Coordinates[coords.X, coords.Y] == Cell.Battleship)
             {
                 Coordinates[coords.X, coords.Y] = Cell.Hit;
-                Hits++;
+                _hits++;
                 return true;
             }
+
             Coordinates[coords.X, coords.Y] = Cell.Miss;
-            Misses++;
+            _misses++;
             return false;
         }
 
         public bool IsLive()
         {
-            return Ships.Any(s=> s.Alive);
+            return Ships.Any(s => s.Alive);
         }
         public bool AddShip(Ship ship, Coordinates loc, Direction direction)
         {
@@ -102,10 +102,9 @@ namespace BS
 
         private void UpdateCells(List<Coordinates> coordinates, Ship ship)
         {
-            foreach (var coordinate in coordinates)
+            foreach (var loc in coordinates)
             {
-                Ships.Add(ship);
-                Log.Output($"Ship {ship.Name} added on your board at {loc} toward {direction}");
+                Coordinates[loc.X, loc.Y] = ship.ToCell();
             }
         }
 

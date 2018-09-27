@@ -4,7 +4,7 @@ namespace BS{
     /// Cell status
     /// </summary>
     public enum Cell{
-        Empty=0,
+        Empty=0,        
         Hit=1,
         Miss=2,
         Destroyer=3, 

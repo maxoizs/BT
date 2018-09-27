@@ -46,11 +46,11 @@ namespace BS
 
         public int Hits()
         {
-            return _board.Hits;
+            return 0;
         }
         public int Misses()
         {
-            return _board.Misses;
+            return 0;
         }
         public bool AddShip(Ship ship, Coordinates loc, Direction direction)
         {
@@ -68,9 +68,9 @@ namespace BS
         }
         private void AddShips()
         {
-            AddShip(Ship.Destroyer);
-            AddShip(Ship.Destroyer);
-            AddShip(Ship.Battleship);
+            AddShip(new Destroyer());
+            AddShip(new Destroyer());
+            AddShip(new Battleship());
         }
 
         public void AddShip(Ship ship)

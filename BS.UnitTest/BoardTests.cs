@@ -17,7 +17,7 @@ namespace Tests
 
             board.GenerateShips();
 
-            var expected = new List<Ship> { Ship.Battleship , Ship.Destroyer, Ship.Destroyer };
+            var expected = new List<Ship> { new Battleship(), new Destroyer(), new Destroyer() };
             CollectionAssert.AreEquivalent(expected, board.Ships);
         }
 
@@ -26,11 +26,11 @@ namespace Tests
         {
             var board = new Board();
 
-            var added = board.AddShip(Ship.Destroyer, new Coordinates(4, 3), Direction.Down);
+            var added = board.AddShip(new Destroyer(), new Coordinates(4, 3), Direction.Down);
 
             Assert.True(added);
             Assert.That(board.Ships, Has.Count.EqualTo(1));
-            Assert.That(board.Ships.First(), Is.EqualTo(Ship.Destroyer));
+            Assert.That(board.Ships.First(), Is.EqualTo(new Destroyer()));
         }
 
         [Test]

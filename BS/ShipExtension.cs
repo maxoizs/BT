@@ -9,9 +9,8 @@ namespace BS
     {
         public static Cell ToCell(this Ship ship)
         {
-            var shipName = ship.ToString();
             Cell cell;
-            Enum.TryParse<Cell>( shipName, out cell);
+            Enum.TryParse<Cell>( ship.Name, out cell);
             return cell;
         }
 

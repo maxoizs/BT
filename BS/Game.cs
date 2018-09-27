@@ -11,31 +11,24 @@ namespace BS
         public List<Player> Players { get; private set; }
         private Random _rand = new Random();
 
-        public Game(){
+        public Game()
+        {
             Players = new List<Player>();
         }
 
-        public void StartMultiPlayerGame(string playerName, string player2Name)
+        public void Start(string playerName)
         {
-            Players.Add(new Player(playerName, false));
-            Players.Add(new Player(player2Name, false));
-        }
-
-        public void StartSinglePlayerGame(string playerName)
-        {
-            var player = new Player(playerName, false); 
+            var player = new Player(playerName, false);
             Players.Add(player);
             var computer = new Player("Computer", true);
             Players.Add(computer);
 
-            StartSinglePlay(computer, player);
+            StartPlay(computer, player);
         }
 
-        private void StartSinglePlay(Player computer, Player player)
-        { 
-            var finish = false; 
-          
-            
+        private void StartPlay(Player computer, Player player)
+        {
+
         }
 
 
