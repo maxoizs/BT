@@ -13,13 +13,6 @@ namespace BS
         }
         public abstract ShipType Type { get; }
         public abstract string Name { get; }
-        public string Flag
-        {
-            get
-            {
-                return Name[0].ToString();
-            }
-        }
         public abstract int Size { get; }
         public bool Alive { get; private set; }
 

@@ -12,7 +12,6 @@ namespace BS
             Cell cell;
             Enum.TryParse<Cell>( ship.Name, out cell);
             return cell;
-        }
-
+        }        
     }
 }

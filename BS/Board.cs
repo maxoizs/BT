@@ -11,8 +11,7 @@ namespace BS
         private const int ShipCapacity = 3;
         public const int MaxRow = 10;
         public const int MaxColumn = 10;
-        public static readonly Dictionary<string, int> RowLabels = new Dictionary<string, int>{
-            {"A",0},{"B",1},{"C",2},{"D",3},{"E",4},{"F",5},{"G",6},{"H",7},{"I",8}, {"J",9}};
+       
 
         public List<Ship> Ships { get; private set; }
         public Cell[,] Coordinates { get; private set; }
@@ -157,12 +156,11 @@ namespace BS
         {
             var x = -1;
             var y = -1;
-
-            if (RowLabels.Keys.Contains(loc[0].ToString().ToUpper()))
-            {
-                x = RowLabels[loc[0].ToString().ToUpper()];
+            if(loc.Length!=2){
+                return null; 
             }
-            else
+            x =RowLabels.GetLabelIndex(loc[0].ToString());
+            if (x<0||x>=MaxRow)            
             {
                 return null;
             }
@@ -253,14 +251,14 @@ namespace BS
         public string PrintStatus()
         {
             var output = new StringBuilder();
-            output.AppendLine("  " + string.Join(' ', RowLabels.Keys));
+            output.AppendLine("  " + string.Join(' ', RowLabels.Labels.Substring(0,MaxRow)));
             for (var y = 0; y < Coordinates.GetLength(1); y++)
             {
                 output.AppendLine();
                 output.Append(y.ToString() + " ");
                 for (var x = 0; x < Coordinates.GetLength(0); x++)
                 {
-                    output.Append((int)Coordinates.GetValue(x, y));
+                    output.Append(Coordinates[x,y].GetSign());
                     output.Append(" ");
                 }
             }
