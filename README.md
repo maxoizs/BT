@@ -1,5 +1,5 @@
 # BT
-Battleship game
+Battleship game, to play with dotnet core, actually it took me while to figure out, how to use vscode, while dotnet code wasn't that hard to get around as it's pretty much the same as .net stander, I used to take things like debug and build for granted while using Visual Studio, now I've to look after the debugger and the builder's json files. 
 
 
 ## Requirement 
