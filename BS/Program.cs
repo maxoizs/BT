@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Reflection;
+using Ninject;
 
 namespace BS
 {
@@ -19,9 +21,13 @@ namespace BS
 
         private static void StartNewGame()
         {
+
+            var kernel = new StandardKernel();
+            kernel.Load(Assembly.GetExecutingAssembly());
+
             Log.Output("Please enter your name");
             var playerName = Console.ReadLine();
-            var game = new Game(new ConsoleBoardDisplayer());
+            var game = kernel.Get<Game>();
 
             game.Start(playerName);
         }

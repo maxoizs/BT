@@ -103,5 +103,18 @@ namespace Tests
             Assert.That(board.Hits, Is.EqualTo(2));
             Assert.IsFalse(board.IsLive());
         }
+
+                [Test]
+        public void GivenValidHitsTwice_BoardCell_ShouldShowHit()
+        {
+            var board = new Board(_userInput);
+            var added = board.AddShip(new Destroyer(), new Coordinates(1, 1), Direction.Down);
+
+            board.TakeHit(new Coordinates(1, 1));
+            board.TakeHit(new Coordinates(1, 1));
+
+            Assert.That(board.Hits, Is.EqualTo(1));
+            Assert.That(board.Coordinates[1,1], Is.EqualTo(Cell.Hit));
+        }
     }
 }
