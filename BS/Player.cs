@@ -13,15 +13,37 @@ namespace BS
     {
         public string Name { get; private set; }
         private Random _rand = new Random();
-        private Board _board = new Board();
+        private IUserInput _userInput;
+        private IBoard _board;
+
 
         /// <summary>
         /// Identify if it's a normal player or computer one.
         /// </summary>
         public bool IsComputer { get; private set; }
-
-        public Player(string name, bool isComputer)
+        public int Hits
         {
+            get
+            {
+                return _board != null ? _board.Hits : 0;
+            }
+        }
+
+        public object Misses
+        {
+            get
+            {
+                return _board != null ? _board.Misses : 0;
+            }
+        }
+
+        public Player(string name, IUserInput userInput, bool isComputer)
+        {
+            //TODO: inject userinput, and board 
+            //I made it simple as my littel knowledge to dotnet and I didn't wont to take more time 
+            _board = new Board(userInput);
+            _userInput = userInput;
+
             Name = name;
             IsComputer = isComputer;
             if (IsComputer)
@@ -56,47 +78,40 @@ namespace BS
         private Coordinates GetHitLocation()
         {
             Coordinates coords = null;
-            while (coords == null)
+            Log.Output($"Where you would like to hit");
+            while (true)
             {
-                Log.Output($"Where you would like to hit, ex: A5 (A for row and 5 for column)");
-                var loc = Console.ReadLine();
-                coords = Board.GetCoordinations(loc);
+                coords = _userInput.GetCoordinates();
+                if (Board.ValidCoordinates(coords))
+                {
+                    break;
+                }
             }
-            return coords; 
+            return coords;
         }
 
-        public void PrintStatus()
+        /// <summary>
+        /// Display the player board using the givin displayer adapter
+        /// </summary>
+        public void PrintStatus(IDisplayBoard displayer)
         {
+            // Todo: Inject IDisplayBoard
             Log.Output(Name);
-            Log.Output(_board.PrintStatus());
+            displayer.DisplayBoard(_board);
         }
 
         private Coordinates RandomHit()
         {
             var row = _rand.Next(1, Board.MaxRow);
-            var colum = _rand.Next(1, Board.MaxColumn);
-            return new Coordinates(row, colum);
+            var column = _rand.Next(1, Board.MaxColumn);
+            return new Coordinates(row, column);
         }
 
         private void AddShips()
         {
-            AddShip( new Destroyer());
-            AddShip( new Destroyer());
-            AddShip( new Battleship());
-        }
-
-        private void AddShip(Ship ship)
-        {
-            var added = false;
-            while (!added)
-            {
-                Log.Output($"Where you would like to add your {ship}, ex: A5 (A for row and 5 for column)");
-                var location = Console.ReadLine();
-                Log.Output("To which direction,[Rr] for toward right, and [Dd] toward down of the grid)");
-                var direction = Console.ReadLine();
-
-                added = _board.AddShip(ship, location, direction);
-            }
+            _board.AddShip(new Destroyer());
+            _board.AddShip(new Destroyer());
+            _board.AddShip(new Battleship());
         }
     }
 }

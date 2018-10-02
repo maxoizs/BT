@@ -6,7 +6,7 @@ namespace BS
     {
         static void Main(string[] args)
         {
-            Log.Output("Welcom to Battel Ship game!");
+            Log.Output("Welcome to Battel Ship game!");
             Log.Output("Would you like to start a game ? [Yy] for yes, anykey for no");
             var newGame = Console.ReadLine();
             if (newGame.ToLower() == "y")
@@ -21,11 +21,9 @@ namespace BS
         {
             Log.Output("Please enter your name");
             var playerName = Console.ReadLine();
-            var game = new Game();
+            var game = new Game(new ConsoleBoardDisplayer());
 
             game.Start(playerName);
-            game.PrintStats();
-
         }
     }
 }

@@ -8,20 +8,21 @@ namespace BS
 {
     public class Game
     {
+        public IDisplayBoard _displayer;
         public Player Player { get; private set; }
         public Player Computer { get; private set; }
-
         public Player Winner { get; private set; }
-        private Random _rand = new Random();
-
-        public Game()
+        public Game(IDisplayBoard displayer)
         {
+            //TODO: remove form here once it's injected to player directly 
+            _displayer = displayer;
         }
 
         public void Start(string playerName)
         {
-            Player = new Player(playerName, false);
-            Computer = new Player("Computer", true);
+            var userInput = new UserInput();
+            Player = new Player(playerName, userInput, false);
+            Computer = new Player("Computer", userInput, true);
             StartPlay();
         }
 
@@ -29,15 +30,19 @@ namespace BS
         {
             while (true)
             {
-                Computer.PrintStatus();
-                Player.PrintStatus();
-                var playerHit= Player.Hit();
+                Computer.PrintStatus(_displayer);
+                Player.PrintStatus(_displayer);
+                var playerHit = Player.Hit();
                 Computer.TakeHit(playerHit);
 
                 if (Computer.Lost())
                 {
                     // Finish the game
                     Winner = Player;
+                    Log.Output($"{Player.Name} Won the game");
+                    Computer.PrintStatus(_displayer);
+                    Log.Output($"{Computer.Hits} successful hits and {Computer.Misses} misses");
+
                     return;
                 }
 
@@ -47,15 +52,12 @@ namespace BS
                 {
                     // Finish the game
                     Winner = Computer;
+                    Log.Output($"{Computer.Name} Won the game");
+                    Log.Output($"{Player.Hits} successful hits and {Player.Misses} misses");
+                    Player.PrintStatus(_displayer);
                     return;
                 }
             }
-        }
-
-        public void PrintStats()
-        {
-            Player.PrintStatus();
-            Computer.PrintStatus();
         }
     }
 }

@@ -14,5 +14,11 @@ namespace BS
             Console.WriteLine(message);
             Console.WriteLine("---------");
         }
+
+        public static void Error(string message)
+        {
+            Console.WriteLine();
+            Console.WriteLine(message);
+        }
     }
 }

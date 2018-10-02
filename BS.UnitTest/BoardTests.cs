@@ -8,11 +8,12 @@ namespace Tests
     [TestFixture]
     public class BoardTest
     {
+        private IUserInput _userInput = new UserInput();
 
         [Test]
         public void When_GenerateShips_ShouldCreateThreeShips()
         {
-            var board = new Board();
+            var board = new Board(_userInput);
 
             board.GenerateShips();
 
@@ -23,7 +24,7 @@ namespace Tests
         [Test]
         public void GiveCoordinatesAndShip_BoardShouldAddShip()
         {
-            var board = new Board();
+            var board = new Board(_userInput);
 
             var added = board.AddShip(new Destroyer(), new Coordinates(4, 3), Direction.Down);
 
@@ -35,7 +36,7 @@ namespace Tests
         [Test]
         public void GiveRepeatedCoordinatesAndShip_BoardShouldNotAddShip()
         {
-            var board = new Board();
+            var board = new Board(_userInput);
 
             board.AddShip(new Destroyer(), new Coordinates(4, 3), Direction.Down);
             var added = board.AddShip(new Destroyer(), new Coordinates(4, 3), Direction.Down);
@@ -44,9 +45,9 @@ namespace Tests
         }
 
         [Test]
-        public void GiveCrosedCoordinatesAndShip_BoardShouldNotAddShip()
+        public void GiveCrossedCoordinatesAndShip_BoardShouldNotAddShip()
         {
-            var board = new Board();
+            var board = new Board(_userInput);
 
             board.AddShip(new Destroyer(), new Coordinates(4, 3), Direction.Down);
             var added = board.AddShip(new Destroyer(), new Coordinates(4, 4), Direction.Down);
@@ -57,21 +58,11 @@ namespace Tests
         [Test]
         public void GiveInvalidCoordinatesAndShip_BoardShouldNotAddShip()
         {
-            var board = new Board();
+            var board = new Board(_userInput);
 
             var added = board.AddShip(new Destroyer(), new Coordinates(14, 13), Direction.Down);
 
             Assert.False(added);
-        }
-
-        [Test]
-        public void GiveStringCoordinatesAndShip_BoardShouldNotAddShip()
-        {
-            var board = new Board();
-
-            var added = board.AddShip(new Destroyer(), "A5", "D");
-            Assert.True(added);
-            Assert.That(board.Ships, Has.Count.EqualTo(1));
-        }
+        }        
     }
 }

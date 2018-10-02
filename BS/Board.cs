@@ -5,25 +5,24 @@ using System.Text;
 
 namespace BS
 {
-    public class Board
+    public class Board : IBoard
     {
         private Random _rand = new Random();
         private const int ShipCapacity = 3;
+        public int Hits { get; private set; }
+        public int Misses { get; private set; }
+        private IUserInput _userInput;
         public const int MaxRow = 10;
         public const int MaxColumn = 10;
-        public static readonly Dictionary<string, int> RowLabels = new Dictionary<string, int>{
-            {"A",0},{"B",1},{"C",2},{"D",3},{"E",4},{"F",5},{"G",6},{"H",7},{"I",8}, {"J",9}};
-
         public List<Ship> Ships { get; private set; }
         public Cell[,] Coordinates { get; private set; }
 
-        private int _hits = 0;
-        private int _misses = 0;
 
-        public Board()
+        public Board(IUserInput userinput)
         {
-            _hits = 0;
-            _misses = 0;
+            _userInput = userinput;
+            Hits = 0;
+            Misses = 0;
             Ships = new List<Ship>();
             Coordinates = GenerateBoardCells();
 
@@ -42,42 +41,67 @@ namespace BS
 
         public void GenerateShips()
         {
-            while (!AddShip(new Battleship())) ;
-            while (!AddShip(new Destroyer())) ;
-            while (!AddShip(new Destroyer())) ;
+            while (!AddShipRandom(new Battleship())) ;
+            while (!AddShipRandom(new Destroyer())) ;
+            while (!AddShipRandom(new Destroyer())) ;
         }
 
-        private bool AddShip(Ship ship)
+        private bool AddShipRandom(Ship ship)
         {
             var loc = new Coordinates(_rand.Next(Board.MaxRow), _rand.Next(Board.MaxColumn));
 
             return AddShip(ship, loc, (Direction)_rand.Next(1, 2));
         }
 
+        /// <summary>
+        /// Process the hit toward the current <see cref="Board"/>
+        /// </summary>
         public bool? TakeHit(Coordinates loc)
         {
             if (!IsLive())
             {
-                InvalidAction($"All ships have been sunk, and player lost already!");
+                Log.Output("All ships have been sunk, and player lost already!, please check the correct value");
                 return false;
-            }            
+            }
 
             if (Coordinates[loc.X, loc.Y] == Cell.Destroyer || Coordinates[loc.X, loc.Y] == Cell.Battleship)
             {
                 Coordinates[loc.X, loc.Y] = Cell.Hit;
-                _hits++;
+                Hits++;
                 return true;
             }
 
             Coordinates[loc.X, loc.Y] = Cell.Miss;
-            _misses++;
+            Misses++;
             return false;
         }
 
         public bool IsLive()
         {
-            return _hits >= (int)ShipType.Destroyer + (int)ShipType.Destroyer + (int)ShipType.Destroyer;
+            var totalShips = (int)ShipType.Destroyer + (int)ShipType.Destroyer + (int)ShipType.Battleship;
+
+            return Hits < totalShips;
         }
+
+        public void AddShip(Ship ship)
+        {
+            Log.Output($"Adding ship: {ship}");
+            var coords = new Coordinates(-1, -1);
+            while (true)
+            {
+                coords = _userInput.GetCoordinates();
+                if (ValidCoordinates(coords))
+                {
+                    var dir = _userInput.GetDirection();
+                    var added = AddShip(ship, coords, dir);
+                    if (added)
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+
         public bool AddShip(Ship ship, Coordinates loc, Direction direction)
         {
             if (InvalidCapacity(ship))
@@ -87,7 +111,7 @@ namespace BS
 
             var targetLoc = CalculateCoords(ship.Size, loc, direction);
 
-            var cells = GetEmptyCells(loc, targetLoc);
+            var cells = InsureEmptyCells(loc, targetLoc);
 
             if (cells == null)
             {
@@ -127,67 +151,9 @@ namespace BS
             return new Coordinates(x, y);
         }
 
-        public bool AddShip(Ship ship, string loc, string direction)
-        {
-            var coords = GetCoordinations(loc);
-            if (coords == null)
-            {
-                return false;
-            }
-
-            Direction dir;
-            if (direction.ToUpper() == "D")
-            {
-                dir = Direction.Down;
-            }
-            else if (direction.ToUpper() == "R")
-            {
-                dir = Direction.Right;
-            }
-            else
-            {
-                InvalidAction($"Invalid direction: {direction} please chose [U]p or [D]own");
-                return false;
-            }
-
-            return AddShip(ship, coords, dir);
-        }
-
-        public static Coordinates GetCoordinations(string loc)
-        {
-            var x = -1;
-            var y = -1;
-
-            if (RowLabels.Keys.Contains(loc[0].ToString().ToUpper()))
-            {
-                x = RowLabels[loc[0].ToString().ToUpper()];
-            }
-            else
-            {
-                return null;
-            }
-
-            if (!int.TryParse(loc[1].ToString(), out y))
-            {
-                return null;
-            }
-
-            var coords = new Coordinates(x, y);
-            if (ValidCoordinates(coords))
-            {
-                return coords;
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        private static void InvalidAction(string error)
-        {
-            Log.Output($"{error}, please check the correct value");
-        }
-
+        /// <summary>
+        /// Check Board capacity of ships 
+        /// </summary>
         private bool InvalidCapacity(Ship ship)
         {
             if (Ships.Count == ShipCapacity)
@@ -213,7 +179,10 @@ namespace BS
             return false;
         }
 
-        private List<Coordinates> GetEmptyCells(Coordinates startLoc, Coordinates endLoc)
+        /// <summary>
+        /// Make sure that position for ship is empty 
+        /// </summary>
+        private List<Coordinates> InsureEmptyCells(Coordinates startLoc, Coordinates endLoc)
         {
             var validLocs = new List<Coordinates>();
             if (!ValidCoordinates(startLoc) || !ValidCoordinates(endLoc))
@@ -241,30 +210,13 @@ namespace BS
             return validLocs;
         }
 
-        private static bool ValidCoordinates(Coordinates loc)
+        public static bool ValidCoordinates(Coordinates loc)
         {
             if (loc.Y < 0 || loc.Y >= MaxColumn || loc.X < 0 || loc.X >= MaxRow)
             {
                 return false;
             }
             return true;
-        }
-
-        public string PrintStatus()
-        {
-            var output = new StringBuilder();
-            output.AppendLine("  " + string.Join(' ', RowLabels.Keys));
-            for (var y = 0; y < Coordinates.GetLength(1); y++)
-            {
-                output.AppendLine();
-                output.Append(y.ToString() + " ");
-                for (var x = 0; x < Coordinates.GetLength(0); x++)
-                {
-                    output.Append((int)Coordinates.GetValue(x, y));
-                    output.Append(" ");
-                }
-            }
-            return output.ToString();
         }
     }
 }
