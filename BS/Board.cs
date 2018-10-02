@@ -78,7 +78,7 @@ namespace BS
 
         public bool IsLive()
         {
-            var totalShips = (int)ShipType.Destroyer + (int)ShipType.Destroyer + (int)ShipType.Battleship;
+            var totalShips =Ships.Select(x=> (int)x.Type).Sum();
 
             return Hits < totalShips;
         }
