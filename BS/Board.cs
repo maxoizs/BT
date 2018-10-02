@@ -71,14 +71,14 @@ namespace BS
                 return true;
             }
 
-            Coordinates[loc.X, loc.Y] = Cell.Miss;
+            Coordinates[loc.X, loc.Y] = Coordinates[loc.X, loc.Y] == Cell.Hit ? Cell.Hit : Cell.Miss;
             Misses++;
             return false;
         }
 
         public bool IsLive()
         {
-            var totalShips =Ships.Select(x=> (int)x.Type).Sum();
+            var totalShips = Ships.Select(x => (int)x.Type).Sum();
 
             return Hits < totalShips;
         }
