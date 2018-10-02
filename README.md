@@ -19,3 +19,8 @@ Alternatively you can use Visual Studio and hit F5
 Not fully tested :( !!!
 Finally if you want to run the unitests use `dotnet test`
 Alternatively you can use Visual Studio and right click on test project and chose `Run Tests`
+
+
+
+## TODO
+Wire a IoC lib to aid us add more unit tests, especially to test game and player
