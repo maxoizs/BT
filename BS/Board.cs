@@ -9,8 +9,8 @@ namespace BS
     {
         private Random _rand = new Random();
         private const int ShipCapacity = 3;
-        private int _hits = 0;
-        private int _misses = 0;
+        public int Hits { get; private set; }
+        public int Misses { get; private set; }
         private IUserInput _userInput;
         public const int MaxRow = 10;
         public const int MaxColumn = 10;
@@ -21,8 +21,8 @@ namespace BS
         public Board(IUserInput userinput)
         {
             _userInput = userinput;
-            _hits = 0;
-            _misses = 0;
+            Hits = 0;
+            Misses = 0;
             Ships = new List<Ship>();
             Coordinates = GenerateBoardCells();
 
@@ -53,46 +53,53 @@ namespace BS
             return AddShip(ship, loc, (Direction)_rand.Next(1, 2));
         }
 
+        /// <summary>
+        /// Process the hit toward the current <see cref="Board"/>
+        /// </summary>
         public bool? TakeHit(Coordinates loc)
         {
             if (!IsLive())
             {
-                InvalidAction($"All ships have been sunk, and player lost already!");
+                Log.Output("All ships have been sunk, and player lost already!, please check the correct value");
                 return false;
             }
 
             if (Coordinates[loc.X, loc.Y] == Cell.Destroyer || Coordinates[loc.X, loc.Y] == Cell.Battleship)
             {
                 Coordinates[loc.X, loc.Y] = Cell.Hit;
-                _hits++;
+                Hits++;
                 return true;
             }
 
             Coordinates[loc.X, loc.Y] = Cell.Miss;
-            _misses++;
+            Misses++;
             return false;
         }
 
         public bool IsLive()
         {
-            return _hits >= (int)ShipType.Destroyer + (int)ShipType.Destroyer + (int)ShipType.Destroyer;
+            var totalShips = (int)ShipType.Destroyer + (int)ShipType.Destroyer + (int)ShipType.Battleship;
+
+            return Hits < totalShips;
         }
 
-        public bool AddShip(Ship ship)
+        public void AddShip(Ship ship)
         {
+            Log.Output($"Adding ship: {ship}");
             var coords = new Coordinates(-1, -1);
             while (true)
             {
                 coords = _userInput.GetCoordinates();
                 if (ValidCoordinates(coords))
                 {
-                    break;
+                    var dir = _userInput.GetDirection();
+                    var added = AddShip(ship, coords, dir);
+                    if (added)
+                    {
+                        break;
+                    }
                 }
             }
-
-            var dir = _userInput.GetDirection();
-
-            return AddShip(ship, coords, dir);
         }
 
         public bool AddShip(Ship ship, Coordinates loc, Direction direction)
@@ -104,7 +111,7 @@ namespace BS
 
             var targetLoc = CalculateCoords(ship.Size, loc, direction);
 
-            var cells = GetEmptyCells(loc, targetLoc);
+            var cells = InsureEmptyCells(loc, targetLoc);
 
             if (cells == null)
             {
@@ -144,11 +151,9 @@ namespace BS
             return new Coordinates(x, y);
         }
 
-        private static void InvalidAction(string error)
-        {
-            Log.Output($"{error}, please check the correct value");
-        }
-
+        /// <summary>
+        /// Check Board capacity of ships 
+        /// </summary>
         private bool InvalidCapacity(Ship ship)
         {
             if (Ships.Count == ShipCapacity)
@@ -174,7 +179,10 @@ namespace BS
             return false;
         }
 
-        private List<Coordinates> GetEmptyCells(Coordinates startLoc, Coordinates endLoc)
+        /// <summary>
+        /// Make sure that position for ship is empty 
+        /// </summary>
+        private List<Coordinates> InsureEmptyCells(Coordinates startLoc, Coordinates endLoc)
         {
             var validLocs = new List<Coordinates>();
             if (!ValidCoordinates(startLoc) || !ValidCoordinates(endLoc))

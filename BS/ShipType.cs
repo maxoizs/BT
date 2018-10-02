@@ -1,7 +1,9 @@
 namespace BS
 {
-    public enum ShipType{
-        Battleship=5,
-        Destroyer =2
+    public enum ShipType
+    {
+        Destroyer = 2,
+        Battleship = 5
+
     }
 }

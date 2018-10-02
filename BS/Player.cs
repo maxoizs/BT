@@ -21,14 +21,29 @@ namespace BS
         /// Identify if it's a normal player or computer one.
         /// </summary>
         public bool IsComputer { get; private set; }
+        public int Hits
+        {
+            get
+            {
+                return _board != null ? _board.Hits : 0;
+            }
+        }
 
-        public Player(string name,IUserInput userInput, bool isComputer)
+        public object Misses
+        {
+            get
+            {
+                return _board != null ? _board.Misses : 0;
+            }
+        }
+
+        public Player(string name, IUserInput userInput, bool isComputer)
         {
             //TODO: inject userinput, and board 
             //I made it simple as my littel knowledge to dotnet and I didn't wont to take more time 
             _board = new Board(userInput);
             _userInput = userInput;
-            
+
             Name = name;
             IsComputer = isComputer;
             if (IsComputer)
@@ -62,14 +77,15 @@ namespace BS
 
         private Coordinates GetHitLocation()
         {
-            Coordinates coords = null; 
+            Coordinates coords = null;
             Log.Output($"Where you would like to hit");
-            while(true)
+            while (true)
             {
-              coords =  _userInput.GetCoordinates();
-              if(Board.ValidCoordinates(coords)){
-                  break;
-              }
+                coords = _userInput.GetCoordinates();
+                if (Board.ValidCoordinates(coords))
+                {
+                    break;
+                }
             }
             return coords;
         }
@@ -79,6 +95,7 @@ namespace BS
         /// </summary>
         public void PrintStatus(IDisplayBoard displayer)
         {
+            // Todo: Inject IDisplayBoard
             Log.Output(Name);
             displayer.DisplayBoard(_board);
         }
