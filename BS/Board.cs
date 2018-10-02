@@ -5,22 +5,22 @@ using System.Text;
 
 namespace BS
 {
-    public class Board
+    public class Board : IBoard
     {
         private Random _rand = new Random();
         private const int ShipCapacity = 3;
+        private int _hits = 0;
+        private int _misses = 0;
+        private IUserInput _userInput;
         public const int MaxRow = 10;
         public const int MaxColumn = 10;
-       
-
         public List<Ship> Ships { get; private set; }
         public Cell[,] Coordinates { get; private set; }
 
-        private int _hits = 0;
-        private int _misses = 0;
 
-        public Board()
+        public Board(IUserInput userinput)
         {
+            _userInput = userinput;
             _hits = 0;
             _misses = 0;
             Ships = new List<Ship>();
@@ -41,12 +41,12 @@ namespace BS
 
         public void GenerateShips()
         {
-            while (!AddShip(new Battleship())) ;
-            while (!AddShip(new Destroyer())) ;
-            while (!AddShip(new Destroyer())) ;
+            while (!AddShipRandom(new Battleship())) ;
+            while (!AddShipRandom(new Destroyer())) ;
+            while (!AddShipRandom(new Destroyer())) ;
         }
 
-        private bool AddShip(Ship ship)
+        private bool AddShipRandom(Ship ship)
         {
             var loc = new Coordinates(_rand.Next(Board.MaxRow), _rand.Next(Board.MaxColumn));
 
@@ -59,7 +59,7 @@ namespace BS
             {
                 InvalidAction($"All ships have been sunk, and player lost already!");
                 return false;
-            }            
+            }
 
             if (Coordinates[loc.X, loc.Y] == Cell.Destroyer || Coordinates[loc.X, loc.Y] == Cell.Battleship)
             {
@@ -77,6 +77,24 @@ namespace BS
         {
             return _hits >= (int)ShipType.Destroyer + (int)ShipType.Destroyer + (int)ShipType.Destroyer;
         }
+
+        public bool AddShip(Ship ship)
+        {
+            var coords = new Coordinates(-1, -1);
+            while (true)
+            {
+                coords = _userInput.GetCoordinates();
+                if (ValidCoordinates(coords))
+                {
+                    break;
+                }
+            }
+
+            var dir = _userInput.GetDirection();
+
+            return AddShip(ship, coords, dir);
+        }
+
         public bool AddShip(Ship ship, Coordinates loc, Direction direction)
         {
             if (InvalidCapacity(ship))
@@ -124,61 +142,6 @@ namespace BS
                 y = loc.Y;
             }
             return new Coordinates(x, y);
-        }
-
-        public bool AddShip(Ship ship, string loc, string direction)
-        {
-            var coords = GetCoordinations(loc);
-            if (coords == null)
-            {
-                return false;
-            }
-
-            Direction dir;
-            if (direction.ToUpper() == "D")
-            {
-                dir = Direction.Down;
-            }
-            else if (direction.ToUpper() == "R")
-            {
-                dir = Direction.Right;
-            }
-            else
-            {
-                InvalidAction($"Invalid direction: {direction} please chose [U]p or [D]own");
-                return false;
-            }
-
-            return AddShip(ship, coords, dir);
-        }
-
-        public static Coordinates GetCoordinations(string loc)
-        {
-            var x = -1;
-            var y = -1;
-            if(loc.Length!=2){
-                return null; 
-            }
-            x =RowLabels.GetLabelIndex(loc[0].ToString());
-            if (x<0||x>=MaxRow)            
-            {
-                return null;
-            }
-
-            if (!int.TryParse(loc[1].ToString(), out y))
-            {
-                return null;
-            }
-
-            var coords = new Coordinates(x, y);
-            if (ValidCoordinates(coords))
-            {
-                return coords;
-            }
-            else
-            {
-                return null;
-            }
         }
 
         private static void InvalidAction(string error)
@@ -239,30 +202,13 @@ namespace BS
             return validLocs;
         }
 
-        private static bool ValidCoordinates(Coordinates loc)
+        public static bool ValidCoordinates(Coordinates loc)
         {
             if (loc.Y < 0 || loc.Y >= MaxColumn || loc.X < 0 || loc.X >= MaxRow)
             {
                 return false;
             }
             return true;
-        }
-
-        public string PrintStatus()
-        {
-            var output = new StringBuilder();
-            output.AppendLine("  " + string.Join(' ', RowLabels.Labels.Substring(0,MaxRow)));
-            for (var y = 0; y < Coordinates.GetLength(1); y++)
-            {
-                output.AppendLine();
-                output.Append(y.ToString() + " ");
-                for (var x = 0; x < Coordinates.GetLength(0); x++)
-                {
-                    output.Append(Coordinates[x,y].GetSign());
-                    output.Append(" ");
-                }
-            }
-            return output.ToString();
         }
     }
 }

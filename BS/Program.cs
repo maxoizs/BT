@@ -21,7 +21,7 @@ namespace BS
         {
             Log.Output("Please enter your name");
             var playerName = Console.ReadLine();
-            var game = new Game();
+            var game = new Game(new ConsoleBoardDisplayer());
 
             game.Start(playerName);
             game.PrintStats();
