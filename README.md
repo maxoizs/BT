@@ -23,4 +23,4 @@ Alternatively you can use Visual Studio and right click on test project and chos
 
 
 ## TODO
-Wire an IoC lib to aid us add more unit tests, especially to test game and player
+write IoC module for test project to enable us from writing unit tests for Game and Player class

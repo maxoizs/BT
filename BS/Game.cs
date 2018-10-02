@@ -14,7 +14,6 @@ namespace BS
         public Player Winner { get; private set; }
         public Game(IDisplayBoard displayer)
         {
-            //TODO: remove form here once it's injected to player directly 
             _displayer = displayer;
         }
 
@@ -37,27 +36,27 @@ namespace BS
 
                 if (Computer.Lost())
                 {
-                    // Finish the game
-                    Winner = Player;
-                    Log.Output($"{Player.Name} Won the game");
-                    Computer.PrintStatus(_displayer);
-                    Log.Output($"{Computer.Hits} successful hits and {Computer.Misses} misses");
-
-                    return;
+                    GameEnd(Player, Computer);
+                    break;
                 }
 
                 var computerHit = Computer.Hit();
                 Player.TakeHit(computerHit);
                 if (Player.Lost())
                 {
-                    // Finish the game
-                    Winner = Computer;
-                    Log.Output($"{Computer.Name} Won the game");
-                    Log.Output($"{Player.Hits} successful hits and {Player.Misses} misses");
-                    Player.PrintStatus(_displayer);
-                    return;
+                    GameEnd(Computer, Player);
+                    break;
                 }
             }
+        }
+
+        private void GameEnd(Player winner, Player loser)
+        {
+            Winner = winner;
+            Log.Output($"{winner.Name} Won the game");
+            Log.Output($"{loser.Hits} successful hits and {loser.Misses} misses");
+            Player.PrintStatus(_displayer);
+            return;
         }
     }
 }

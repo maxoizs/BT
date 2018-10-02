@@ -40,7 +40,7 @@ namespace BS
         public Player(string name, IUserInput userInput, bool isComputer)
         {
             //TODO: inject userinput, and board 
-            //I made it simple as my littel knowledge to dotnet and I didn't wont to take more time 
+            //injection made manually and simple as my littel knowledge to dotnet, so I don't want to take more time 
             _board = new Board(userInput);
             _userInput = userInput;
 
