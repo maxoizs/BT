@@ -16,5 +16,6 @@ You could run the game by calling run on the project file using `dotnet run BS\B
 Alternatively you can use Visual Studio and hit F5
 
 ## Test
+Not fully tested :( !!!
 Finally if you want to run the unitests use `dotnet test`
 Alternatively you can use Visual Studio and right click on test project and chose `Run Tests`
