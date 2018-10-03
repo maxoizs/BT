@@ -38,19 +38,6 @@ namespace BS
             return cells;
         }
 
-        public void GenerateShips()
-        {
-            while (!AddShipRandom(new Battleship())) ;
-            while (!AddShipRandom(new Destroyer())) ;
-            while (!AddShipRandom(new Destroyer())) ;
-        }
-
-        private bool AddShipRandom(Ship ship)
-        {
-            var loc = new Coordinates(_rand.Next(Board.MaxRow), _rand.Next(Board.MaxColumn));
-
-            return AddShip(ship, loc, (Direction)_rand.Next(1, 2));
-        }
 
         /// <summary>
         /// Process the hit toward the current <see cref="Board"/>
@@ -86,7 +73,7 @@ namespace BS
             return Hits < totalShips;
         }
 
-        public void AddShip(Ship ship)
+        private void AddShip(Ship ship)
         {
             Log.Output($"Adding ship: {ship}");
             var coords = new Coordinates(-1, -1);
@@ -230,6 +217,13 @@ namespace BS
                 return false;
             }
             return true;
+        }
+
+        public void InstallShips()
+        {
+            AddShip(new Destroyer());
+            AddShip(new Destroyer());
+            AddShip(new Battleship());
         }
     }
 }

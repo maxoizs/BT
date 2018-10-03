@@ -52,14 +52,9 @@ namespace BS
 
             Name = name;
             IsComputer = isComputer;
-            if (IsComputer)
-            {
-                _board.GenerateShips();
-            }
-            else
-            {
-                AddShips();
-            }
+
+            AddShips();
+
         }
 
         internal bool Lost()
@@ -101,7 +96,7 @@ namespace BS
         /// </summary>
         public void PrintStatus(IDisplayBoard displayer)
         {
-            // Todo: Inject IDisplayBoard
+
             Log.Output(Name);
             displayer.DisplayBoard(_board);
         }
@@ -115,9 +110,7 @@ namespace BS
 
         private void AddShips()
         {
-            _board.AddShip(new Destroyer());
-            _board.AddShip(new Destroyer());
-            _board.AddShip(new Battleship());
+            _board.InstallShips();
         }
     }
 }

@@ -15,7 +15,7 @@ namespace Tests
         {
             var board = new Board(_userInput);
 
-            board.GenerateShips();
+            board.InstallShips();
 
             var expected = new List<Ship> { new Battleship(), new Destroyer(), new Destroyer() };
             CollectionAssert.AreEquivalent(expected.Select(s => s.Name), board.Ships.Select(s => s.Name));

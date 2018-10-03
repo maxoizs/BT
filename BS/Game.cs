@@ -11,19 +11,26 @@ namespace BS
         private IDisplayBoard _displayer;
         private IUserInput _userInput;
         public Player Player { get; private set; }
+        private IBoard _playerBoard;
+        private IUserInput _computerInput;
         public Player Computer { get; private set; }
+        private IBoard _computerBoard;
         public Player Winner { get; private set; }
-        public Game(IDisplayBoard displayer, IUserInput userInput)
+        public Game(IDisplayBoard displayer, IUserInput userInput, IUserInput computerInput)
         {
             _displayer = displayer;
             _userInput = userInput;
+            _computerInput = computerInput; 
         }
 
         public void Start(string playerName)
         {
-           
+
             Player = new Player(playerName, _userInput, false);
-            Computer = new Player("Computer", _userInput, true);
+            _playerBoard = new Board(_userInput);
+            
+            Computer = new Player("Computer", _computerInput, true);
+            _computerBoard = new Board(_computerInput);
             StartPlay();
         }
 
