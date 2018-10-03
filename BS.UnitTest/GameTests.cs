@@ -53,7 +53,7 @@ namespace Tests
 
             game.Start(playerName);
 
-            Assert.That(game.Player.Name, Is.EqualTo(playerName));
+            Assert.That(game.Player.Player.Name, Is.EqualTo(playerName));
         }
 
         [Test]
@@ -81,7 +81,7 @@ namespace Tests
             game.Start(playerName);
 
             Assert.That(game.Winner, Is.Not.Null);
-            Assert.That(game.Winner.Name, Is.EqualTo(game.Computer.Name));
+            Assert.That(game.Winner.Player.Name, Is.EqualTo(game.Computer.Player.Name));
         }
     }
 }

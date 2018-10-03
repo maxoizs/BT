@@ -10,12 +10,10 @@ namespace BS
     {
         private IDisplayBoard _displayer;
         private IUserInput _userInput;
-        public Player Player { get; private set; }
-        private IBoard _playerBoard;
+        public PlayerManager Player { get; private set; }
         private IUserInput _computerInput;
-        public Player Computer { get; private set; }
-        private IBoard _computerBoard;
-        public Player Winner { get; private set; }
+        public PlayerManager Computer { get; private set; }
+        public PlayerManager Winner { get; private set; }
         public Game(IDisplayBoard displayer, IUserInput userInput, IUserInput computerInput)
         {
             _displayer = displayer;
@@ -26,11 +24,9 @@ namespace BS
         public void Start(string playerName)
         {
 
-            Player = new Player(playerName, _userInput, false);
-            _playerBoard = new Board(_userInput);
+            Player = new PlayerManager(playerName, _userInput, false);
             
-            Computer = new Player("Computer", _computerInput, true);
-            _computerBoard = new Board(_computerInput);
+            Computer = new PlayerManager("Computer", _computerInput, true);
             StartPlay();
         }
 
@@ -59,10 +55,10 @@ namespace BS
             }
         }
 
-        private void GameEnd(Player winner, Player loser)
+        private void GameEnd(PlayerManager winner, PlayerManager loser)
         {
             Winner = winner;
-            Log.Output($"{winner.Name} Won the game");
+            Log.Output($"{winner.Player.Name} Won the game");
             Log.Output($"{loser.Hits} successful hits and {loser.Misses} misses");
             Player.PrintStatus(_displayer);
             return;
