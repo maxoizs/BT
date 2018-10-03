@@ -8,20 +8,22 @@ namespace BS
 {
     public class Game
     {
-        public IDisplayBoard _displayer;
+        private IDisplayBoard _displayer;
+        private IUserInput _userInput;
         public Player Player { get; private set; }
         public Player Computer { get; private set; }
         public Player Winner { get; private set; }
-        public Game(IDisplayBoard displayer)
+        public Game(IDisplayBoard displayer, IUserInput userInput)
         {
             _displayer = displayer;
+            _userInput = userInput;
         }
 
         public void Start(string playerName)
         {
-            var userInput = new UserInput();
-            Player = new Player(playerName, userInput, false);
-            Computer = new Player("Computer", userInput, true);
+           
+            Player = new Player(playerName, _userInput, false);
+            Computer = new Player("Computer", _userInput, true);
             StartPlay();
         }
 

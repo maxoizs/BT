@@ -40,7 +40,13 @@ namespace BS
         public Player(string name, IUserInput userInput, bool isComputer)
         {
             //TODO: inject userinput, and board 
-            //injection made manually and simple as my littel knowledge to dotnet, so I don't want to take more time 
+            /* 
+            injection made manually and simple as my littel knowledge to dotnet,
+             so I don't want to take more time 
+             About board: I give to Game and back to player, and I got confused trying to figure out
+             Who is responsible for it, I do strongly believe it should be owned by the Game class 
+             though I made almost independent and go easily to Game
+            */
             _board = new Board(userInput);
             _userInput = userInput;
 

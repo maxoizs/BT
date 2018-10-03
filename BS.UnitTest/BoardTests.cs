@@ -90,7 +90,7 @@ namespace Tests
             Assert.That(board.Hits, Is.EqualTo(1));
         }
 
-        
+
         [Test]
         public void GivenValidHitsEqualToShip_BoardLive_ShouldBeFalse()
         {
@@ -104,7 +104,7 @@ namespace Tests
             Assert.IsFalse(board.IsLive());
         }
 
-                [Test]
+        [Test]
         public void GivenValidHitsTwice_BoardCell_ShouldShowHit()
         {
             var board = new Board(_userInput);
@@ -114,7 +114,7 @@ namespace Tests
             board.TakeHit(new Coordinates(1, 1));
 
             Assert.That(board.Hits, Is.EqualTo(1));
-            Assert.That(board.Coordinates[1,1], Is.EqualTo(Cell.Hit));
+            Assert.That(board.Coordinates[1, 1], Is.EqualTo(Cell.Hit));
         }
     }
 }
