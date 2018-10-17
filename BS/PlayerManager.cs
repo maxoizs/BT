@@ -13,7 +13,7 @@ namespace BS
     {
         public IPlayer Player { get; private set; }
         private Random _rand = new Random();
-        private IUserInput _userInput;
+        private IPlayerInput _userInput;
         private IBoard _board;
 
         public int Hits
@@ -32,10 +32,10 @@ namespace BS
             }
         }
 
-        public PlayerManager(string name, IUserInput userInput, bool isComputer)
+        public PlayerManager(string name, bool isComputer)
         {
-            _board = new Board(userInput);
-            _userInput = userInput;
+            _userInput = isComputer ? new ComputerInput() : _userInput = new UserInput();
+            _board = new Board(_userInput);
             Player = new Player(name, isComputer);
             AddShips();
         }
@@ -52,26 +52,7 @@ namespace BS
 
         public Coordinates Hit()
         {
-            if (Player.IsComputer)
-            {
-                return RandomHit();
-            }
-            return GetHitLocation();
-        }
-
-        private Coordinates GetHitLocation()
-        {
-            Coordinates coords = null;
-            Log.Output($"Where you would like to hit");
-            while (true)
-            {
-                coords = _userInput.GetCoordinates();
-                if (Board.ValidCoordinates(coords))
-                {
-                    break;
-                }
-            }
-            return coords;
+            return _userInput.GetCoordinates();
         }
 
         /// <summary>
@@ -83,12 +64,6 @@ namespace BS
             displayer.DisplayBoard(_board);
         }
 
-        private Coordinates RandomHit()
-        {
-            var row = _rand.Next(1, Board.MaxRow);
-            var column = _rand.Next(1, Board.MaxColumn);
-            return new Coordinates(row, column);
-        }
 
         private void AddShips()
         {

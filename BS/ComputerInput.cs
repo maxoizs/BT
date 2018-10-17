@@ -2,7 +2,7 @@
 
 namespace BS
 {
-    public class ComputerInput : IUserInput
+    public class ComputerInput : IPlayerInput
     {
         private Random _rand = new Random();
         public Coordinates GetCoordinates()

@@ -11,15 +11,15 @@ namespace BS
         private const int ShipCapacity = 3;
         public int Hits { get; private set; }
         public int Misses { get; private set; }
-        private IUserInput _userInput;
+        private IPlayerInput _playerInput;
         public const int MaxRow = 10;
         public const int MaxColumn = 10;
         public List<Ship> Ships { get; private set; }
         public Cell[,] Coordinates { get; private set; }
 
-        public Board(IUserInput userinput)
+        public Board(IPlayerInput playerInput)
         {
-            _userInput = userinput;
+            _playerInput = playerInput;
             Hits = 0;
             Misses = 0;
             Ships = new List<Ship>();
@@ -79,10 +79,10 @@ namespace BS
             var coords = new Coordinates(-1, -1);
             while (true)
             {
-                coords = _userInput.GetCoordinates();
+                coords = _playerInput.GetCoordinates();
                 if (ValidCoordinates(coords))
                 {
-                    var dir = _userInput.GetDirection();
+                    var dir = _playerInput.GetDirection();
                     var added = AddShip(ship, coords, dir);
                     if (added)
                     {
@@ -109,7 +109,7 @@ namespace BS
 
             if (cells == null)
             {
-                Log.Output($"Cannot add {ship.Name} on your board at {startLocation} toward {direction}");
+                Log.Output($"Cannot add {ship.Type} on your board at {startLocation} toward {direction}");
                 return false;
             }
 
@@ -120,7 +120,7 @@ namespace BS
         }
 
         /// <summary>
-        /// Update Cell with <see cref="Ship.Name"/> shortcut 
+        /// Update Cell with <see cref="Ship.Type"/> shortcut 
         /// </summary>
         private void UpdateCells(List<Coordinates> coordinates, Ship ship)
         {

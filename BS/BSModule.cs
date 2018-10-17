@@ -9,7 +9,8 @@ namespace BS
         {
             Bind<IBoard>().To<Board>();
             Bind<IDisplayBoard>().To<ConsoleBoardDisplayer>();
-            Bind<IUserInput>().To<UserInput>();
+            Bind<IPlayerInput>().To<UserInput>();
+            Bind<IPlayerInput>().To<ComputerInput>();
             Bind<Game>().ToSelf();
         }
     }

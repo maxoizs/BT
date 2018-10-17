@@ -4,13 +4,13 @@ namespace BS{
          public const string Labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";   
 
          /// <summary>
-         /// Return the index value of chracter witin the <see cref="Labels"/> string. 
+         /// Return the index value of character within the <see cref="Labels"/> string. 
          /// </summary>
-         /// <param name="lable"></param>
+         /// <param name="label"></param>
          /// <returns>-1 if not found, 0 or more if found.</returns>
-         public static int GetLabelIndex(string lable){
-             if (Labels.Contains(lable)){
-                 return Labels.IndexOf(lable);
+         public static int GetLabelIndex(string label){
+             if (Labels.Contains(label)){
+                 return Labels.IndexOf(label);
              }
              return -1; 
          }

@@ -9,24 +9,20 @@ namespace BS
     public class Game
     {
         private IDisplayBoard _displayer;
-        private IUserInput _userInput;
         public PlayerManager Player { get; private set; }
-        private IUserInput _computerInput;
         public PlayerManager Computer { get; private set; }
         public PlayerManager Winner { get; private set; }
-        public Game(IDisplayBoard displayer, IUserInput userInput, IUserInput computerInput)
+        public Game(IDisplayBoard displayer)
         {
             _displayer = displayer;
-            _userInput = userInput;
-            _computerInput = computerInput; 
         }
 
         public void Start(string playerName)
         {
 
-            Player = new PlayerManager(playerName, _userInput, false);
-            
-            Computer = new PlayerManager("Computer", _computerInput, true);
+            Player = new PlayerManager(playerName, false);
+
+            Computer = new PlayerManager("Computer", true);
             StartPlay();
         }
 
