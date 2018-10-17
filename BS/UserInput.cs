@@ -2,7 +2,7 @@ using System;
 
 namespace BS
 {
-    public class UserInput : IUserInput
+    public class UserInput : IPlayerInput
     {
         public Coordinates GetCoordinates()
         {
@@ -25,7 +25,7 @@ namespace BS
                     continue;
                 }
 
-                return new Coordinates(x, y);                
+                return new Coordinates(x, y);
             }
 
         }
@@ -34,7 +34,7 @@ namespace BS
         {
             Log.Output("To which direction,[Rr] for toward right, and [Dd] toward down of the grid)");
             while (true)
-            {                
+            {
                 var direction = Console.ReadLine();
                 if (direction.ToLower() == "r")
                 {
@@ -47,6 +47,6 @@ namespace BS
                 Log.Error($"Invalid Right/Down direction, Please try again");
             }
         }
-    
+
     }
 }

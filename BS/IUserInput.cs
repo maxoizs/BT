@@ -1,6 +1,7 @@
 namespace BS
 {
-    public interface IUserInput{
+    public interface IPlayerInput
+    {
         Coordinates GetCoordinates();
 
         Direction GetDirection();

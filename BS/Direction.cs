@@ -5,7 +5,7 @@ namespace BS
     /// </summary>
     public enum Direction
     {
-        Right, 
-        Down
+        Right=1, 
+        Down=2
     }
 }

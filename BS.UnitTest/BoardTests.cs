@@ -8,17 +8,17 @@ namespace Tests
     [TestFixture]
     public class BoardTest
     {
-        private IUserInput _userInput = new UserInput();
+        private IPlayerInput _userInput = new UserInput();
 
         [Test]
         public void When_GenerateShips_ShouldCreateThreeShips()
         {
             var board = new Board(_userInput);
 
-            board.GenerateShips();
+            board.InstallShips();
 
             var expected = new List<Ship> { new Battleship(), new Destroyer(), new Destroyer() };
-            CollectionAssert.AreEquivalent(expected.Select(s => s.Name), board.Ships.Select(s => s.Name));
+            CollectionAssert.AreEquivalent(expected.Select(s => s.Type), board.Ships.Select(s => s.Type));
         }
 
         [Test]
@@ -30,7 +30,7 @@ namespace Tests
 
             Assert.True(added);
             Assert.That(board.Ships, Has.Count.EqualTo(1));
-            Assert.That(board.Ships.First().Name, Is.EqualTo(new Destroyer().Name));
+            Assert.That(board.Ships.First().Type, Is.EqualTo(new Destroyer().Type));
         }
 
         [Test]
@@ -90,7 +90,7 @@ namespace Tests
             Assert.That(board.Hits, Is.EqualTo(1));
         }
 
-        
+
         [Test]
         public void GivenValidHitsEqualToShip_BoardLive_ShouldBeFalse()
         {
@@ -104,7 +104,7 @@ namespace Tests
             Assert.IsFalse(board.IsLive());
         }
 
-                [Test]
+        [Test]
         public void GivenValidHitsTwice_BoardCell_ShouldShowHit()
         {
             var board = new Board(_userInput);
@@ -114,7 +114,7 @@ namespace Tests
             board.TakeHit(new Coordinates(1, 1));
 
             Assert.That(board.Hits, Is.EqualTo(1));
-            Assert.That(board.Coordinates[1,1], Is.EqualTo(Cell.Hit));
+            Assert.That(board.Coordinates[1, 1], Is.EqualTo(Cell.Hit));
         }
     }
 }

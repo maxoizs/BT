@@ -11,15 +11,16 @@ namespace BS
         private const int ShipCapacity = 3;
         public int Hits { get; private set; }
         public int Misses { get; private set; }
-        private IPlayerInput _playerInput;
+        private IUserInput _userInput;
         public const int MaxRow = 10;
         public const int MaxColumn = 10;
         public List<Ship> Ships { get; private set; }
         public Cell[,] Coordinates { get; private set; }
 
-        public Board(IPlayerInput playerInput)
+
+        public Board(IUserInput userinput)
         {
-            _playerInput = playerInput;
+            _userInput = userinput;
             Hits = 0;
             Misses = 0;
             Ships = new List<Ship>();
@@ -38,6 +39,19 @@ namespace BS
             return cells;
         }
 
+        public void GenerateShips()
+        {
+            while (!AddShipRandom(new Battleship())) ;
+            while (!AddShipRandom(new Destroyer())) ;
+            while (!AddShipRandom(new Destroyer())) ;
+        }
+
+        private bool AddShipRandom(Ship ship)
+        {
+            var loc = new Coordinates(_rand.Next(Board.MaxRow), _rand.Next(Board.MaxColumn));
+
+            return AddShip(ship, loc, (Direction)_rand.Next(1, 2));
+        }
 
         /// <summary>
         /// Process the hit toward the current <see cref="Board"/>
@@ -57,15 +71,11 @@ namespace BS
                 return true;
             }
 
-            //Double hit should show as hit 
             Coordinates[loc.X, loc.Y] = Coordinates[loc.X, loc.Y] == Cell.Hit ? Cell.Hit : Cell.Miss;
             Misses++;
             return false;
         }
 
-        /// <summary>
-        /// Indicate if <see cref="Board"/> still have active <see cref="Ship"/>s
-        /// </summary>
         public bool IsLive()
         {
             var totalShips = Ships.Select(x => (int)x.Type).Sum();
@@ -73,16 +83,16 @@ namespace BS
             return Hits < totalShips;
         }
 
-        private void AddShip(Ship ship)
+        public void AddShip(Ship ship)
         {
             Log.Output($"Adding ship: {ship}");
             var coords = new Coordinates(-1, -1);
             while (true)
             {
-                coords = _playerInput.GetCoordinates();
+                coords = _userInput.GetCoordinates();
                 if (ValidCoordinates(coords))
                 {
-                    var dir = _playerInput.GetDirection();
+                    var dir = _userInput.GetDirection();
                     var added = AddShip(ship, coords, dir);
                     if (added)
                     {
@@ -92,36 +102,29 @@ namespace BS
             }
         }
 
-        /// <summary>
-        /// Add <see cref="Ship" />
-        /// </summary>
-        /// <returns>true of added, and false if not been added</returns>
-        public bool AddShip(Ship ship, Coordinates startLocation, Direction direction)
+        public bool AddShip(Ship ship, Coordinates loc, Direction direction)
         {
             if (InvalidCapacity(ship))
             {
                 return false;
             }
 
-            var endLocation = GetEndLocation(ship.Size, startLocation, direction);
+            var targetLoc = CalculateCoords(ship.Size, loc, direction);
 
-            var cells = InsureEmptyCells(startLocation, endLocation);
+            var cells = InsureEmptyCells(loc, targetLoc);
 
             if (cells == null)
             {
-                Log.Output($"Cannot add {ship.Type} on your board at {startLocation} toward {direction}");
+                Log.Output($"Cannot add {ship.Name} on your board at {loc} toward {direction}");
                 return false;
             }
 
             UpdateCells(cells, ship);
             Ships.Add(ship);
-            Log.Output($"Ship {ship} added on your board at {startLocation} toward {direction}");
+            Log.Output($"Ship {ship} added on your board at {loc} toward {direction}");
             return true;
         }
 
-        /// <summary>
-        /// Update Cell with <see cref="Ship.Type"/> shortcut 
-        /// </summary>
         private void UpdateCells(List<Coordinates> coordinates, Ship ship)
         {
             foreach (var loc in coordinates)
@@ -130,7 +133,7 @@ namespace BS
             }
         }
 
-        private Coordinates GetEndLocation(int shipSize, Coordinates loc, Direction direction)
+        private Coordinates CalculateCoords(int shipSize, Coordinates loc, Direction direction)
         {
             var x = 0;
             var y = 0;
@@ -207,9 +210,6 @@ namespace BS
             return validLocs;
         }
 
-        /// <summary>
-        /// Ensure <see cref="Coordinates"/> within the range of <see cref="Board"/>
-        /// </summary>
         public static bool ValidCoordinates(Coordinates loc)
         {
             if (loc.Y < 0 || loc.Y >= MaxColumn || loc.X < 0 || loc.X >= MaxRow)
@@ -217,13 +217,6 @@ namespace BS
                 return false;
             }
             return true;
-        }
-
-        public void InstallShips()
-        {
-            AddShip(new Destroyer());
-            AddShip(new Destroyer());
-            AddShip(new Battleship());
         }
     }
 }

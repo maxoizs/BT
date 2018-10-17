@@ -10,8 +10,8 @@ namespace BS
         public static Cell ToCell(this Ship ship)
         {
             Cell cell;
-            Enum.TryParse<Cell>( ship.Name, out cell);
+            Enum.TryParse<Cell>(ship.Type.ToString(), out cell);
             return cell;
-        }        
+        }
     }
 }
