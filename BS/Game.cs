@@ -13,15 +13,14 @@ namespace BS
         public PlayerManager Computer { get; private set; }
         public PlayerManager Winner { get; private set; }
 
-        public void Start(string playerName)
+        public void New(string fstPlayerName, bool fstIsComputer, string secPlayerName, bool secPlayerIsComputer )
         {
-            Player = new PlayerManager(playerName, false);
+            Player = new PlayerManager(fstPlayerName, fstIsComputer);
 
-            Computer = new PlayerManager("Computer", true);
-            StartPlay();
+            Computer = new PlayerManager(secPlayerName, secPlayerIsComputer);
         }
 
-        private void StartPlay()
+        public void Start()
         {
             while (true)
             {

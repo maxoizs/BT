@@ -27,8 +27,9 @@ namespace BS
             Log.Output("Please enter your name");
             var playerName = Console.ReadLine();
             var game = kernel.Get<Game>();
-
-            game.Start(playerName);
+            
+            game.New(playerName, false, "Computer", true);
+            game.Start();
         }
     }
 }

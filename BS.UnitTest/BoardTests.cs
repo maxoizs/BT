@@ -108,7 +108,7 @@ namespace BS.UnitTest
         [Test]
         public void When_GenerateShips_ShouldCreateThreeShips()
         {
-            var board = new Board(_userInput);
+            var board = new Board(new ComputerInput());
 
             board.InstallShips();
 

@@ -53,7 +53,8 @@ namespace BS.UnitTest
             var game = new Game(_boardDisplayer.Object);
             var playerName = "Mohammad";
 
-            game.Start(playerName);
+            game.New(playerName, true, "Test", true);
+            game.Start();
 
             Assert.That(game.Winner, Is.Not.Null);
             Assert.That(game.Winner.Player.Name, Is.EqualTo(game.Computer.Player.Name));
@@ -65,7 +66,8 @@ namespace BS.UnitTest
             var game = new Game(_boardDisplayer.Object);
             var playerName = "Mohammad";
 
-            game.Start(playerName);
+            game.New(playerName, true, "Test", true);
+            game.Start();
 
             Assert.That(game.Player.Player.Name, Is.EqualTo(playerName));
         }
@@ -76,7 +78,8 @@ namespace BS.UnitTest
             var game = new Game(_boardDisplayer.Object);
             var playerName = "Mohammad";
 
-            game.Start(playerName);
+            game.New(playerName, true, "Test", true);
+            game.Start();
 
             Assert.That(game.Winner, Is.Not.Null);
         }
