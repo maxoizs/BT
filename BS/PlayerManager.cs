@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BS
 {
@@ -11,26 +7,9 @@ namespace BS
     /// </summary>
     public class PlayerManager
     {
-        public IPlayer Player { get; private set; }
+        private readonly IBoard _board;
         private Random _rand = new Random();
-        private IPlayerInput _userInput;
-        private IBoard _board;
-
-        public int Hits
-        {
-            get
-            {
-                return _board != null ? _board.Hits : 0;
-            }
-        }
-
-        public object Misses
-        {
-            get
-            {
-                return _board != null ? _board.Misses : 0;
-            }
-        }
+        private readonly IPlayerInput _userInput;
 
         public PlayerManager(string name, bool isComputer)
         {
@@ -39,6 +18,12 @@ namespace BS
             Player = new Player(name, isComputer);
             AddShips();
         }
+
+        public IPlayer Player { get; }
+
+        public int Hits => _board != null ? _board.Hits : 0;
+
+        public object Misses => _board != null ? _board.Misses : 0;
 
         internal bool Lost()
         {

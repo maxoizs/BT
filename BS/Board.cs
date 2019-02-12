@@ -1,21 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace BS
 {
     public class Board : IBoard
     {
-        private Random _rand = new Random();
         private const int ShipCapacity = 3;
-        public int Hits { get; private set; }
-        public int Misses { get; private set; }
-        private IPlayerInput _playerInput;
         public const int MaxRow = 10;
         public const int MaxColumn = 10;
-        public List<Ship> Ships { get; private set; }
-        public Cell[,] Coordinates { get; private set; }
+        private readonly IPlayerInput _playerInput;
+        private Random _rand = new Random();
 
         public Board(IPlayerInput playerInput)
         {
@@ -24,19 +19,12 @@ namespace BS
             Misses = 0;
             Ships = new List<Ship>();
             Coordinates = GenerateBoardCells();
-
         }
 
-        private Cell[,] GenerateBoardCells()
-        {
-            var cells = new Cell[MaxRow, MaxColumn]; ;
-            for (var x = 0; x < MaxRow; x++)
-                for (var y = 0; y < MaxColumn; y++)
-                {
-                    cells.SetValue(Cell.Empty, x, y);
-                }
-            return cells;
-        }
+        public List<Ship> Ships { get; }
+        public int Hits { get; private set; }
+        public int Misses { get; private set; }
+        public Cell[,] Coordinates { get; }
 
 
         /// <summary>
@@ -68,28 +56,9 @@ namespace BS
         /// </summary>
         public bool IsLive()
         {
-            var totalShips = Ships.Select(x => (int)x.Type).Sum();
+            var totalShips = Ships.Select(x => (int) x.Type).Sum();
 
             return Hits < totalShips;
-        }
-
-        private void AddShip(Ship ship)
-        {
-            Log.Output($"Adding ship: {ship}");
-            var coords = new Coordinates(-1, -1);
-            while (true)
-            {
-                coords = _playerInput.GetCoordinates();
-                if (ValidCoordinates(coords))
-                {
-                    var dir = _playerInput.GetDirection();
-                    var added = AddShip(ship, coords, dir);
-                    if (added)
-                    {
-                        break;
-                    }
-                }
-            }
         }
 
         /// <summary>
@@ -119,15 +88,48 @@ namespace BS
             return true;
         }
 
+        public void InstallShips()
+        {
+            AddShip(new Destroyer());
+            AddShip(new Destroyer());
+            AddShip(new Battleship());
+        }
+
+        private Cell[,] GenerateBoardCells()
+        {
+            var cells = new Cell[MaxRow, MaxColumn];
+            ;
+            for (var x = 0; x < MaxRow; x++)
+            for (var y = 0; y < MaxColumn; y++)
+                cells.SetValue(Cell.Empty, x, y);
+            return cells;
+        }
+
+        private void AddShip(Ship ship)
+        {
+            Log.Output($"Adding ship: {ship}");
+            var coords = new Coordinates(-1, -1);
+            while (true)
+            {
+                coords = _playerInput.GetCoordinates();
+                if (ValidCoordinates(coords))
+                {
+                    var dir = _playerInput.GetDirection();
+                    var added = AddShip(ship, coords, dir);
+                    if (added)
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Update Cell with <see cref="Ship.Type"/> shortcut 
         /// </summary>
         private void UpdateCells(List<Coordinates> coordinates, Ship ship)
         {
-            foreach (var loc in coordinates)
-            {
-                Coordinates[loc.X, loc.Y] = ship.ToCell();
-            }
+            foreach (var loc in coordinates) Coordinates[loc.X, loc.Y] = ship.ToCell();
         }
 
         private Coordinates GetEndLocation(int shipSize, Coordinates loc, Direction direction)
@@ -145,6 +147,7 @@ namespace BS
                 x = loc.X + shipSize;
                 y = loc.Y;
             }
+
             return new Coordinates(x, y);
         }
 
@@ -173,6 +176,7 @@ namespace BS
                     return false;
                 }
             }
+
             return false;
         }
 
@@ -187,20 +191,23 @@ namespace BS
                 return null;
             }
 
-            for (int x = startLoc.X; x < endLoc.X; x++)
+            for (var x = startLoc.X; x < endLoc.X; x++)
             {
                 if (Coordinates[x, startLoc.Y] > Cell.Miss)
                 {
                     return null;
                 }
+
                 validLocs.Add(new Coordinates(x, startLoc.Y));
             }
-            for (int y = startLoc.Y; y < endLoc.Y; y++)
+
+            for (var y = startLoc.Y; y < endLoc.Y; y++)
             {
                 if (Coordinates[startLoc.X, y] > Cell.Miss)
                 {
                     return null;
                 }
+
                 validLocs.Add(new Coordinates(startLoc.X, y));
             }
 
@@ -216,14 +223,8 @@ namespace BS
             {
                 return false;
             }
-            return true;
-        }
 
-        public void InstallShips()
-        {
-            AddShip(new Destroyer());
-            AddShip(new Destroyer());
-            AddShip(new Battleship());
+            return true;
         }
     }
 }

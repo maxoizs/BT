@@ -11,6 +11,7 @@ namespace BS
         {
             Alive = true;
         }
+
         public abstract ShipType Type { get; }
         public abstract int Size { get; }
         public bool Alive { get; private set; }
@@ -44,6 +45,7 @@ namespace BS
             {
                 Alive = false;
             }
+
             return true;
         }
     }

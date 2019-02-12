@@ -4,9 +4,9 @@ using Ninject;
 
 namespace BS
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             Log.Output("Welcome to Battel Ship game!");
             Log.Output("Would you like to start a game ? [Yy] for yes, anykey for no");
@@ -21,7 +21,6 @@ namespace BS
 
         private static void StartNewGame()
         {
-
             var kernel = new StandardKernel();
             kernel.Load(Assembly.GetExecutingAssembly());
 

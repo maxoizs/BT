@@ -10,6 +10,7 @@ namespace BS
         /// Generate Ships in random position for Computer player 
         /// </summary>
         void InstallShips();
+
         bool IsLive();
 
         /// <summary>

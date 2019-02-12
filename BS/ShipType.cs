@@ -4,6 +4,5 @@ namespace BS
     {
         Destroyer = 2,
         Battleship = 5
-
     }
 }

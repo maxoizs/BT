@@ -1,4 +1,3 @@
-using System;
 using System.Text;
 
 namespace BS
@@ -12,14 +11,15 @@ namespace BS
             for (var y = 0; y < board.Coordinates.GetLength(1); y++)
             {
                 output.AppendLine();
-                output.Append(y.ToString() + " ");
+                output.Append(y + " ");
                 for (var x = 0; x < board.Coordinates.GetLength(0); x++)
                 {
                     output.Append(board.Coordinates[x, y].GetSign());
                     output.Append(" ");
                 }
             }
-           Log.Output(output.ToString());
+
+            Log.Output(output.ToString());
         }
     }
 }

@@ -1,25 +1,13 @@
-using BS;
-using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
+using NUnit.Framework;
 
-namespace Tests
+namespace BS.UnitTest
 {
     [TestFixture]
     public class BoardTest
     {
-        private IPlayerInput _userInput = new UserInput();
-
-        [Test]
-        public void When_GenerateShips_ShouldCreateThreeShips()
-        {
-            var board = new Board(_userInput);
-
-            board.InstallShips();
-
-            var expected = new List<Ship> { new Battleship(), new Destroyer(), new Destroyer() };
-            CollectionAssert.AreEquivalent(expected.Select(s => s.Type), board.Ships.Select(s => s.Type));
-        }
+        private readonly IPlayerInput _userInput = new UserInput();
 
         [Test]
         public void GiveCoordinatesAndShip_BoardShouldAddShip()
@@ -31,17 +19,6 @@ namespace Tests
             Assert.True(added);
             Assert.That(board.Ships, Has.Count.EqualTo(1));
             Assert.That(board.Ships.First().Type, Is.EqualTo(new Destroyer().Type));
-        }
-
-        [Test]
-        public void GiveRepeatedCoordinatesAndShip_BoardShouldNotAddShip()
-        {
-            var board = new Board(_userInput);
-
-            board.AddShip(new Destroyer(), new Coordinates(4, 3), Direction.Down);
-            var added = board.AddShip(new Destroyer(), new Coordinates(4, 3), Direction.Down);
-
-            Assert.False(added);
         }
 
         [Test]
@@ -115,6 +92,28 @@ namespace Tests
 
             Assert.That(board.Hits, Is.EqualTo(1));
             Assert.That(board.Coordinates[1, 1], Is.EqualTo(Cell.Hit));
+        }
+
+        [Test]
+        public void GiveRepeatedCoordinatesAndShip_BoardShouldNotAddShip()
+        {
+            var board = new Board(_userInput);
+
+            board.AddShip(new Destroyer(), new Coordinates(4, 3), Direction.Down);
+            var added = board.AddShip(new Destroyer(), new Coordinates(4, 3), Direction.Down);
+
+            Assert.False(added);
+        }
+
+        [Test]
+        public void When_GenerateShips_ShouldCreateThreeShips()
+        {
+            var board = new Board(_userInput);
+
+            board.InstallShips();
+
+            var expected = new List<Ship> {new Battleship(), new Destroyer(), new Destroyer()};
+            CollectionAssert.AreEquivalent(expected.Select(s => s.Type), board.Ships.Select(s => s.Type));
         }
     }
 }

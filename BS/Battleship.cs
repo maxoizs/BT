@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace BS
 {
     public class Battleship : Ship

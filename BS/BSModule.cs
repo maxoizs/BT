@@ -1,4 +1,3 @@
-using Ninject;
 using Ninject.Modules;
 
 namespace BS

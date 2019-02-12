@@ -6,7 +6,8 @@ namespace BS
     {
         public Coordinates GetCoordinates()
         {
-            Log.Output($"Please Enter a coordinates using letters for rows and number for columns, ex: A5 (A for row and 5 for column)");
+            Log.Output(
+                "Please Enter a coordinates using letters for rows and number for columns, ex: A5 (A for row and 5 for column)");
             while (true)
             {
                 var input = Console.ReadLine();
@@ -14,20 +15,20 @@ namespace BS
                 var y = -1;
                 if (input.Length != 2)
                 {
-                    Log.Error($"Invalid input, Please try again");
+                    Log.Error("Invalid input, Please try again");
                     continue;
                 }
+
                 x = RowLabels.GetLabelIndex(input[0].ToString().ToUpper());
 
                 if (!int.TryParse(input[1].ToString(), out y))
                 {
-                    Log.Error($"Invalid Column vale, Please try again");
+                    Log.Error("Invalid Column vale, Please try again");
                     continue;
                 }
 
                 return new Coordinates(x, y);
             }
-
         }
 
         public Direction GetDirection()
@@ -40,13 +41,14 @@ namespace BS
                 {
                     return Direction.Right;
                 }
+
                 if (direction.ToLower() == "d")
                 {
                     return Direction.Down;
                 }
-                Log.Error($"Invalid Right/Down direction, Please try again");
+
+                Log.Error("Invalid Right/Down direction, Please try again");
             }
         }
-
     }
 }

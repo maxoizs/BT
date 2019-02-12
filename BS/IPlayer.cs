@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace BS
 {
     /// <summary>
@@ -22,6 +16,5 @@ namespace BS
         /// Display the player board using the givin displayer adapter
         /// </summary>
         void PrintDetails();
-
     }
 }

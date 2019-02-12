@@ -1,29 +1,26 @@
 using System;
-using BS;
 using Moq;
 using NUnit.Framework;
 
-namespace Tests
+namespace BS.UnitTest
 {
-
     [TestFixture]
     public class GameTests
     {
         private Mock<IDisplayBoard> _boardDisplayer;
         private Mock<IPlayerInput> _userInput;
-        private Random _rand = new Random();
+        private readonly Random _rand = new Random();
 
         [OneTimeSetUp]
         public void Setup()
         {
             _boardDisplayer = new Mock<IDisplayBoard>();
             _boardDisplayer.Setup(x => x.DisplayBoard(It.IsAny<IBoard>()))
-            .Callback((IBoard b) => DisplayCallBack(b));
+                .Callback((IBoard b) => DisplayCallBack(b));
 
             _userInput = new Mock<IPlayerInput>();
             _userInput.Setup(x => x.GetDirection()).Returns(GenerateRandomDirection);
             _userInput.Setup(x => x.GetCoordinates()).Returns(GenerateRandomCoords);
-
         }
 
         private Coordinates GenerateRandomCoords()
@@ -38,11 +35,28 @@ namespace Tests
 
         private Direction GenerateRandomDirection()
         {
-            return (Direction)_rand.Next(1, 3);
+            return (Direction) _rand.Next(1, 3);
         }
 
         private void DisplayCallBack(IBoard board)
         {
+        }
+
+        // [Test]
+        public void GivenBadHits_ComputerShouldWin()
+        {
+            var userInput = new Mock<IPlayerInput>();
+            userInput.Setup(x => x.GetDirection()).Returns(Direction.Down);
+            // a Hack to limit hits 
+            //( still there is a probability of having the computer's ship within this range)
+            userInput.Setup(x => x.GetCoordinates()).Returns(GenerateLimitedCoords);
+            var game = new Game(_boardDisplayer.Object);
+            var playerName = "Mohammad";
+
+            game.Start(playerName);
+
+            Assert.That(game.Winner, Is.Not.Null);
+            Assert.That(game.Winner.Player.Name, Is.EqualTo(game.Computer.Player.Name));
         }
 
         [Test]
@@ -65,23 +79,6 @@ namespace Tests
             game.Start(playerName);
 
             Assert.That(game.Winner, Is.Not.Null);
-        }
-
-        // [Test]
-        public void GivenBadHits_ComputerShouldWin()
-        {
-            var userInput = new Mock<IPlayerInput>();
-            userInput.Setup(x => x.GetDirection()).Returns(Direction.Down);
-            // a Hack to limit hits 
-            //( still there is a probability of having the computer's ship within this range)
-            userInput.Setup(x => x.GetCoordinates()).Returns(GenerateLimitedCoords);
-            var game = new Game(_boardDisplayer.Object);
-            var playerName = "Mohammad";
-
-            game.Start(playerName);
-
-            Assert.That(game.Winner, Is.Not.Null);
-            Assert.That(game.Winner.Player.Name, Is.EqualTo(game.Computer.Player.Name));
         }
     }
 }

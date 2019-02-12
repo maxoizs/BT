@@ -1,5 +1,3 @@
-using System;
-
 namespace BS
 {
     public static class CellExtension
@@ -20,7 +18,7 @@ namespace BS
                     return "0";
                 default:
                     return string.Empty;
-            }            
+            }
         }
     }
 }
